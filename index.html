@@ -4,14 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Saru_Craft_World | Handmade Crochet</title>
+    <title>Saru_Crafts_World | Handmade Crochet</title>
+
+    <meta
+        name="description"
+        content="Saru_Crafts_World - Beautiful handmade crochet products made with love."
+    >
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <link
-        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap"
         rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     >
 
     <link rel="stylesheet" href="style.css">
@@ -19,364 +29,1075 @@
 
 <body>
 
-<!-- ================= HEADER ================= -->
+<!-- =====================================================
+     INTRO
+===================================================== -->
+
+<div id="introScreen" class="intro-screen">
+    <div class="intro-content">
+        <img
+            src="picture/Logo.jpg"
+            alt="Saru_Crafts_World Logo"
+            class="intro-logo"
+        >
+
+        <h1>Saru_Crafts_World</h1>
+        <p>Handmade with love 🧶</p>
+    </div>
+</div>
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
 
 <header class="header">
 
-    <div class="logo">
-        🧶 <span>Saru_Craft_World</span>
-    </div>
+    <div class="container header-inner">
 
-    <nav id="navbar">
+        <button
+            id="mobileMenuBtn"
+            class="icon-btn menu-btn"
+            aria-label="Open menu"
+        >
+            <i class="fa-solid fa-bars"></i>
+        </button>
 
-        <a href="#home">Home</a>
-
-        <a href="#shop">Shop</a>
-
-        <a href="#categories">Categories</a>
-
-        <a href="#about">About</a>
-
-        <a href="#contact">Contact</a>
-
-        <a href="#" id="menuLoginBtn">
-            👤 My Account
+        <a href="#home" class="logo">
+            <img
+                src="picture/Logo.jpg"
+                alt="Saru_Crafts_World"
+            >
+            <span>Saru_Crafts_World</span>
         </a>
 
-    </nav>
+        <nav id="mainNav" class="nav">
 
-    <div class="header-actions">
+            <a href="#home">Home</a>
+            <a href="#shop">Shop</a>
+            <a href="#categories">Categories</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
 
-        <button
-            id="wishlistBtn"
-            class="icon-btn"
-            type="button"
-        >
-            ♡
-            <span id="wishlistCount">0</span>
-        </button>
+        </nav>
 
-        <button
-            id="cartBtn"
-            class="icon-btn"
-            type="button"
-        >
-            🛒
-            <span id="cartCount">0</span>
-        </button>
+        <div class="header-actions">
 
-        <button
-            id="darkModeBtn"
-            class="icon-btn"
-            type="button"
-        >
-            🌙
-        </button>
+            <button
+                id="searchToggle"
+                class="icon-btn"
+                title="Search"
+            >
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
 
-        <button
-            id="menuBtn"
-            class="icon-btn menu-btn"
-            type="button"
-        >
-            ☰
-        </button>
+            <button
+                id="wishlistBtn"
+                class="icon-btn"
+                title="Wishlist"
+            >
+                <i class="fa-regular fa-heart"></i>
+                <span id="wishlistCount" class="badge">0</span>
+            </button>
+
+            <button
+                id="cartBtn"
+                class="icon-btn"
+                title="Cart"
+            >
+                <i class="fa-solid fa-bag-shopping"></i>
+                <span id="cartCount" class="badge">0</span>
+            </button>
+
+            <button
+                id="accountBtn"
+                class="icon-btn account-desktop"
+                title="Account"
+            >
+                <i class="fa-regular fa-user"></i>
+            </button>
+
+            <button
+                id="darkModeBtn"
+                class="icon-btn dark-desktop"
+                title="Dark Mode"
+            >
+                <i class="fa-solid fa-moon"></i>
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- SEARCH -->
+    <div id="searchArea" class="search-area">
+
+        <div class="container search-area-inner">
+
+            <div class="search-box">
+                <input
+                    type="search"
+                    id="searchInput"
+                    placeholder="Search crochet products..."
+                    autocomplete="off"
+                >
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </div>
+
+            <button
+                id="closeSearch"
+                class="search-close"
+                aria-label="Close search"
+            >
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+        </div>
 
     </div>
 
 </header>
 
 
-<!-- ================= HERO ================= -->
+<!-- =====================================================
+     MOBILE MENU
+===================================================== -->
+
+<div id="mobileMenu" class="mobile-menu">
+
+    <div class="mobile-menu-header">
+
+        <strong>Menu</strong>
+
+        <button id="mobileMenuClose" class="modal-close">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+    </div>
+
+    <a href="#home">Home</a>
+    <a href="#shop">Shop</a>
+    <a href="#categories">Categories</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+
+    <button id="mobileAccountBtn">
+        <i class="fa-regular fa-user"></i>
+        Account
+    </button>
+
+    <button id="mobileDarkModeBtn">
+        <i class="fa-solid fa-moon"></i>
+        Dark Mode
+    </button>
+
+</div>
+
+
+<!-- =====================================================
+     HERO
+===================================================== -->
 
 <section id="home" class="hero">
 
-    <div class="hero-content">
+    <div class="container">
 
-        <p class="small-title">
-            HANDMADE WITH LOVE 🧶
-        </p>
+        <div class="hero-content">
 
-        <h1>
-            Beautiful Crochet<br>
-            Made Just For You
-        </h1>
+            <div class="hero-tag">
+                <i class="fa-solid fa-heart"></i>
+                Handmade with love
+            </div>
 
-        <p>
-            Handmade crochet creations made with care,
-            creativity and lots of love. 💜
-        </p>
+            <h1>
+                Beautiful Crochet
+                <span>Made Just For You</span>
+            </h1>
 
-        <a
-            href="#shop"
-            class="btn hero-btn"
-        >
-            Shop Now 🛍️
-        </a>
+            <p>
+                Discover beautiful handmade crochet creations,
+                carefully crafted with love and creativity.
+            </p>
 
-    </div>
+            <div class="hero-buttons">
 
-</section>
+                <a href="#shop" class="btn btn-primary">
+                    <i class="fa-solid fa-bag-shopping"></i>
+                    Shop Now
+                </a>
 
+                <a href="#about" class="btn btn-outline">
+                    Learn More
+                </a>
 
-<!-- ================= CATEGORIES ================= -->
+            </div>
 
-<section
-    id="categories"
-    class="categories-section"
->
-
-    <div class="section-title">
-
-        <p>EXPLORE</p>
-
-        <h2>
-            Shop By Category
-        </h2>
-
-    </div>
-
-    <div class="category-buttons">
-
-        <button
-            class="category-btn active"
-            data-category="all"
-        >
-            All
-        </button>
-
-        <button
-            class="category-btn"
-            data-category="dress"
-        >
-            👗 Dresses
-        </button>
-
-        <button
-            class="category-btn"
-            data-category="accessories"
-        >
-            🎀 Accessories
-        </button>
-
-        <button
-            class="category-btn"
-            data-category="bags"
-        >
-            👜 Bags
-        </button>
-
-        <button
-            class="category-btn"
-            data-category="toys"
-        >
-            🧸 Toys
-        </button>
+        </div>
 
     </div>
 
 </section>
 
 
-<!-- ================= SHOP ================= -->
+<!-- =====================================================
+     CATEGORIES
+===================================================== -->
 
-<section
-    id="shop"
-    class="shop-section"
->
+<section id="categories" class="section categories">
 
-    <div class="section-title">
+    <div class="container">
 
-        <p>OUR COLLECTION</p>
+        <div class="section-title">
+            <div class="small-title">Explore</div>
+            <h2>Shop by Category</h2>
+            <p>Find something special from our handmade collection.</p>
+        </div>
 
-        <h2>
-            Handmade Crochet
-        </h2>
+        <div class="category-list">
+
+            <button
+                class="category-card"
+                data-category="dress"
+            >
+                <span class="category-icon">👗</span>
+                <strong>Dresses</strong>
+                <small>Beautiful crochet dresses</small>
+            </button>
+
+            <button
+                class="category-card"
+                data-category="accessories"
+            >
+                <span class="category-icon">🎀</span>
+                <strong>Accessories</strong>
+                <small>Cute handmade accessories</small>
+            </button>
+
+            <button
+                class="category-card"
+                data-category="bags"
+            >
+                <span class="category-icon">👜</span>
+                <strong>Bags</strong>
+                <small>Stylish crochet bags</small>
+            </button>
+
+            <button
+                class="category-card"
+                data-category="toys"
+            >
+                <span class="category-icon">🧸</span>
+                <strong>Toys</strong>
+                <small>Adorable crochet toys</small>
+            </button>
+
+        </div>
 
     </div>
 
-    <div class="search-container">
+</section>
 
-        <input
-            type="text"
-            id="searchInput"
-            placeholder="🔍 Search products..."
+
+<!-- =====================================================
+     PROMO
+===================================================== -->
+
+<section class="promo">
+
+    <div class="container">
+
+        <div class="promo-box">
+
+            <div>
+                <h3>Handmade With Love 🧶</h3>
+                <p>Every piece is carefully made for you.</p>
+            </div>
+
+            <a href="#shop" class="btn btn-primary">
+                Explore Collection
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     SHOP
+===================================================== -->
+
+<section id="shop" class="section">
+
+    <div class="container">
+
+        <div class="section-title">
+
+            <div class="small-title">Our Collection</div>
+
+            <h2>Shop Crochet</h2>
+
+            <p>
+                Choose your favourite handmade creation.
+            </p>
+
+        </div>
+
+        <div class="search-box shop-search">
+
+            <input
+                type="search"
+                id="shopSearchInput"
+                placeholder="Search products..."
+                autocomplete="off"
+            >
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+        </div>
+
+
+        <div class="shop-controls">
+
+            <div class="filter-list">
+
+                <button
+                    class="filter-btn active"
+                    data-filter="all"
+                >
+                    All
+                </button>
+
+                <button
+                    class="filter-btn"
+                    data-filter="dress"
+                >
+                    Dresses
+                </button>
+
+                <button
+                    class="filter-btn"
+                    data-filter="accessories"
+                >
+                    Accessories
+                </button>
+
+                <button
+                    class="filter-btn"
+                    data-filter="bags"
+                >
+                    Bags
+                </button>
+
+                <button
+                    class="filter-btn"
+                    data-filter="toys"
+                >
+                    Toys
+                </button>
+
+            </div>
+
+            <select id="sortProducts" class="sort-select">
+                <option value="default">Sort: Featured</option>
+                <option value="low">Price: Low to High</option>
+                <option value="high">Price: High to Low</option>
+                <option value="name">Name: A to Z</option>
+            </select>
+
+        </div>
+
+
+        <div id="productGrid" class="product-grid"></div>
+
+        <div
+            id="noProducts"
+            class="empty-state"
+            style="display:none;"
+        >
+            <i class="fa-solid fa-face-sad-tear"></i>
+            <h3>No products found</h3>
+            <p>Try another search or category.</p>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     WHY CHOOSE US
+===================================================== -->
+
+<section class="section why-section">
+
+    <div class="container">
+
+        <div class="section-title">
+            <div class="small-title">Why Us</div>
+            <h2>Why Choose Us?</h2>
+        </div>
+
+        <div class="features-grid">
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fa-solid fa-heart"></i>
+                </div>
+                <h3>Made With Love</h3>
+                <p>Every product is handmade carefully.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fa-solid fa-star"></i>
+                </div>
+                <h3>Premium Quality</h3>
+                <p>We focus on quality and beautiful finishing.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fa-solid fa-truck"></i>
+                </div>
+                <h3>Easy Delivery</h3>
+                <p>Simple and convenient order process.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fa-brands fa-whatsapp"></i>
+                </div>
+                <h3>WhatsApp Orders</h3>
+                <p>Place your order directly through WhatsApp.</p>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     CUSTOM ORDER
+===================================================== -->
+
+<section class="section custom-order">
+
+    <div class="container">
+
+        <div class="custom-box">
+
+            <h2>Want Something Custom?</h2>
+
+            <p>
+                Tell us what you would like and we can discuss
+                your custom crochet order.
+            </p>
+
+            <button id="customOrderBtn" class="btn btn-primary">
+                <i class="fa-brands fa-whatsapp"></i>
+                Request Custom Order
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     REVIEWS
+===================================================== -->
+
+<section id="reviews" class="reviews-section">
+
+    <div class="container">
+
+        <div class="section-title">
+            <div class="small-title">Reviews</div>
+            <h2>Happy Customers</h2>
+        </div>
+
+        <div class="reviews-grid">
+
+            <div class="review-card">
+                <div class="review-stars">★★★★★</div>
+
+                <p>
+                    Beautiful handmade work. I absolutely loved it!
+                </p>
+
+                <div class="reviewer">
+                    <div class="reviewer-avatar">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+
+                    <div>
+                        <strong>Happy Customer</strong>
+                        <small>Verified Customer</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="review-card">
+                <div class="review-stars">★★★★★</div>
+
+                <p>
+                    The quality and finishing are really beautiful.
+                </p>
+
+                <div class="reviewer">
+                    <div class="reviewer-avatar">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+
+                    <div>
+                        <strong>Happy Customer</strong>
+                        <small>Verified Customer</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="review-card">
+                <div class="review-stars">★★★★★</div>
+
+                <p>
+                    Cute products and very nice handmade details.
+                </p>
+
+                <div class="reviewer">
+                    <div class="reviewer-avatar">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+
+                    <div>
+                        <strong>Happy Customer</strong>
+                        <small>Verified Customer</small>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     ABOUT
+===================================================== -->
+
+<section id="about" class="section about-section">
+
+    <div class="container">
+
+        <div class="about-grid">
+
+            <div class="about-content">
+
+                <div class="section-title left-title">
+                    <div class="small-title">Our Story</div>
+                    <h2>Made By Hand, Made With Heart</h2>
+                </div>
+
+                <p>
+                    Saru_Crafts_World creates beautiful handmade
+                    crochet products with care, patience and love.
+                </p>
+
+                <p>
+                    Each piece is made to bring a little more
+                    warmth and happiness into your everyday life.
+                </p>
+
+                <ul class="about-list">
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Handmade products
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Carefully selected materials
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Personalised custom orders
+                    </li>
+
+                </ul>
+
+            </div>
+
+            <div class="about-image">
+                🧶
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     CONTACT
+===================================================== -->
+
+<section id="contact" class="section">
+
+    <div class="container">
+
+        <div class="section-title">
+
+            <div class="small-title">Get In Touch</div>
+
+            <h2>Contact Us</h2>
+
+            <p>
+                Have a question? We would love to hear from you.
+            </p>
+
+        </div>
+
+        <div class="contact-grid">
+
+            <a
+                id="whatsappLink"
+                href="#"
+                class="contact-card"
+            >
+                <div class="contact-icon">
+                    <i class="fa-brands fa-whatsapp"></i>
+                </div>
+
+                <h3>WhatsApp</h3>
+                <p>Chat with us directly</p>
+            </a>
+
+            <a
+                id="instagramLink"
+                href="#"
+                class="contact-card"
+                target="_blank"
+                rel="noopener"
+            >
+                <div class="contact-icon">
+                    <i class="fa-brands fa-instagram"></i>
+                </div>
+
+                <h3>Instagram</h3>
+                <p>Follow our crochet journey</p>
+            </a>
+
+            <a
+                id="emailLink"
+                href="mailto:"
+                class="contact-card"
+            >
+                <div class="contact-icon">
+                    <i class="fa-solid fa-envelope"></i>
+                </div>
+
+                <h3>Email</h3>
+                <p>Send us an email</p>
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer class="footer">
+
+    <div class="container">
+
+        <div class="footer-grid">
+
+            <div>
+                <h3>Saru_Crafts_World</h3>
+
+                <p>
+                    Handmade crochet creations made with love.
+                </p>
+            </div>
+
+            <div>
+                <h3>Quick Links</h3>
+
+                <a href="#home">Home</a>
+                <a href="#shop">Shop</a>
+                <a href="#categories">Categories</a>
+                <a href="#about">About</a>
+            </div>
+
+            <div>
+                <h3>Account</h3>
+
+                <a href="#" id="footerLogin">Login</a>
+                <a href="#" id="footerRegister">Register</a>
+                <a href="#" id="footerWishlist">Wishlist</a>
+                <a href="#" id="footerOrders">My Orders</a>
+            </div>
+
+            <div>
+                <h3>Contact</h3>
+
+                <a href="#" id="footerWhatsapp">
+                    WhatsApp
+                </a>
+
+                <a href="#" id="footerInstagram">
+                    Instagram
+                </a>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            © 2026 Saru_Crafts_World. All rights reserved.
+        </div>
+
+    </div>
+
+</footer>
+
+
+<!-- =====================================================
+     PRODUCT MODAL
+===================================================== -->
+
+<div id="productModal" class="modal">
+
+    <div class="modal-backdrop" data-close="productModal"></div>
+
+    <div class="modal-content product-modal-content">
+
+        <button
+            class="modal-close"
+            data-close="productModal"
+        >
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="product-details">
+
+            <div>
+
+                <div class="main-image-box">
+
+                    <img
+                        id="modalMainImage"
+                        src=""
+                        alt=""
+                    >
+
+                    <button
+                        id="prevImage"
+                        class="gallery-arrow gallery-prev"
+                    >
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+
+                    <button
+                        id="nextImage"
+                        class="gallery-arrow gallery-next"
+                    >
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+
+                    <span id="imageCounter" class="image-count">
+                        1 / 1
+                    </span>
+
+                    <button id="zoomImage" class="zoom-btn">
+                        <i class="fa-solid fa-magnifying-glass-plus"></i>
+                    </button>
+
+                </div>
+
+                <div
+                    id="thumbnailContainer"
+                    class="thumbnail-list"
+                ></div>
+
+            </div>
+
+
+            <div class="product-details-info">
+
+                <div id="modalProductCategory" class="category">
+                    Crochet
+                </div>
+
+                <h2 id="modalProductName"></h2>
+
+                <div id="modalStars" class="rating"></div>
+
+                <div id="modalRating" class="rating-text"></div>
+
+                <div id="modalPrice" class="details-price"></div>
+
+                <p
+                    id="modalDescription"
+                    class="details-description"
+                ></p>
+
+
+                <div
+                    id="colorOptionGroup"
+                    class="option-group"
+                >
+
+                    <label>
+                        Color:
+                        <span id="selectedColor"></span>
+                    </label>
+
+                    <div id="colorOptions" class="color-options"></div>
+
+                </div>
+
+
+                <div
+                    id="sizeOptionGroup"
+                    class="option-group"
+                >
+
+                    <label>
+                        Size:
+                        <span id="selectedSize"></span>
+                    </label>
+
+                    <div id="sizeOptions" class="size-options"></div>
+
+                </div>
+
+
+                <div class="option-group">
+
+                    <label>
+                        Customization
+                    </label>
+
+                    <textarea
+                        id="customizationText"
+                        class="customization-input"
+                        placeholder="Any special request? (optional)"
+                    ></textarea>
+
+                </div>
+
+
+                <div class="option-group">
+
+                    <label>Quantity</label>
+
+                    <div class="quantity-box">
+
+                        <button id="modalQtyMinus">
+                            −
+                        </button>
+
+                        <span id="modalQuantity">1</span>
+
+                        <button id="modalQtyPlus">
+                            +
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="detail-buttons">
+
+                    <button
+                        id="modalAddToCart"
+                        class="btn btn-primary"
+                    >
+                        <i class="fa-solid fa-cart-plus"></i>
+                        Add to Cart
+                    </button>
+
+                    <button
+                        id="modalBuyNow"
+                        class="btn buy-now"
+                    >
+                        Buy Now
+                    </button>
+
+                </div>
+
+
+                <button
+                    id="modalWishlist"
+                    class="wishlist-detail-btn"
+                >
+                    <i class="fa-regular fa-heart"></i>
+                    Add to Wishlist
+                </button>
+
+
+                <div class="delivery-box">
+                    <i class="fa-solid fa-truck"></i>
+                    <span id="modalDelivery">
+                        Estimated delivery
+                    </span>
+                </div>
+
+
+                <div class="accordion">
+
+                    <div class="accordion-item">
+
+                        <div class="accordion-title">
+                            Product Information
+
+                            <i class="fa-solid fa-chevron-down"></i>
+                        </div>
+
+                        <div
+                            id="modalProductInfo"
+                            class="accordion-content"
+                        >
+                            Handmade crochet product.
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     ZOOM MODAL
+===================================================== -->
+
+<div id="zoomModal" class="modal zoom-modal">
+
+    <div class="modal-backdrop" data-close="zoomModal"></div>
+
+    <div class="modal-content">
+
+        <button
+            id="zoomClose"
+            class="modal-close"
+            data-close="zoomModal"
+        >
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <img
+            id="zoomedImage"
+            src=""
+            alt=""
         >
 
     </div>
+
+</div>
+
+
+<!-- =====================================================
+     CART
+===================================================== -->
+
+<div id="cartOverlay" class="overlay"></div>
+
+<aside id="cartSidebar" class="cart-sidebar">
+
+    <div class="cart-header">
+
+        <h2>
+            <i class="fa-solid fa-bag-shopping"></i>
+            Your Cart
+        </h2>
+
+        <button id="closeCart" class="modal-close">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+    </div>
+
+
+    <div id="cartItems" class="cart-items"></div>
+
 
     <div
-        id="productsGrid"
-        class="products-grid"
-    ></div>
-
-</section>
-
-
-<!-- ================= ABOUT ================= -->
-
-<section
-    id="about"
-    class="about-section"
->
-
-    <div class="about-content">
-
-        <div class="about-text">
-
-            <p class="small-title">
-                ABOUT US
-            </p>
-
-            <h2>
-                Made With Love,<br>
-                One Stitch At A Time 💜
-            </h2>
-
-            <p>
-                Welcome to Saru_Craft_World!
-                Every crochet item is handmade with love,
-                patience and creativity.
-            </p>
-
-            <p>
-                Our goal is to create beautiful,
-                unique and special handmade products
-                that bring happiness to you and your loved ones.
-            </p>
-
-        </div>
-
-        <div class="about-art">
-            🧶
-        </div>
-
+        id="emptyCart"
+        class="empty-state"
+    >
+        <i class="fa-solid fa-cart-shopping"></i>
+        <h3>Your cart is empty</h3>
+        <p>Add something beautiful.</p>
     </div>
 
-</section>
 
+    <div id="cartFooter" class="cart-summary">
 
-<!-- ================= CONTACT ================= -->
-
-<section
-    id="contact"
-    class="contact-section"
->
-
-    <div class="section-title">
-
-        <p>GET IN TOUCH</p>
-
-        <h2>
-            Contact Us
-        </h2>
-
-    </div>
-
-    <div class="contact-cards">
-
-        <div class="contact-card">
-
-            <div>📱</div>
-
-            <h3>
-                WhatsApp
-            </h3>
-
-            <p>
-                Place your order through WhatsApp
-            </p>
-
-        </div>
-
-
-        <div class="contact-card">
-
-            <div>💌</div>
-
-            <h3>
-                Message Us
-            </h3>
-
-            <p>
-                We would love to hear from you
-            </p>
-
-        </div>
-
-
-        <div class="contact-card">
-
-            <div>🧶</div>
-
-            <h3>
-                Handmade
-            </h3>
-
-            <p>
-                Every product is carefully handmade
-            </p>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- ================= CART ================= -->
-
-<div
-    id="overlay"
-    class="overlay"
-></div>
-
-
-<aside
-    id="cartSidebar"
-    class="cart-sidebar"
->
-
-    <div class="sidebar-header">
-
-        <h2>
-            🛒 Your Cart
-        </h2>
-
-        <button
-            id="closeCart"
-            class="close-btn"
-            type="button"
+        <div
+            id="deliveryMessage"
+            class="free-delivery-text"
         >
-            ×
-        </button>
+            Add more products for free delivery.
+        </div>
 
-    </div>
+        <div class="progress-bar">
+            <div
+                id="deliveryProgress"
+                class="progress-fill"
+            ></div>
+        </div>
 
+        <div class="cart-row">
+            <span>Subtotal</span>
+            <strong id="cartSubtotal">₹0</strong>
+        </div>
 
-    <div
-        id="cartItems"
-        class="cart-items"
-    ></div>
+        <div class="cart-row">
+            <span>Delivery</span>
+            <strong id="cartDelivery">FREE</strong>
+        </div>
 
-
-    <div class="cart-footer">
-
-        <div class="cart-total-row">
-
-            <span>
-                Total
-            </span>
-
-            ₹<span id="cartTotal">0</span>
-
+        <div class="cart-total">
+            <span>Total</span>
+            <strong id="cartTotal">₹0</strong>
         </div>
 
         <button
             id="checkoutBtn"
-            class="btn checkout-btn"
-            type="button"
+            class="btn btn-primary checkout-btn"
         >
-            Proceed to Checkout →
+            Proceed to Checkout
+        </button>
+
+        <button
+            id="continueShopping"
+            class="continue-shopping"
+        >
+            Continue Shopping
         </button>
 
     </div>
@@ -384,668 +1105,667 @@
 </aside>
 
 
-<!-- ================= WISHLIST MODAL ================= -->
+<!-- =====================================================
+     WISHLIST MODAL
+===================================================== -->
 
-<div
-    id="wishlistModal"
-    class="modal"
-    aria-hidden="true"
->
+<div id="wishlistModal" class="modal">
 
-    <div class="modal-content">
+    <div class="modal-backdrop" data-close="wishlistModal"></div>
+
+    <div class="modal-content wishlist-content">
 
         <button
-            id="closeWishlist"
-            class="close-btn"
-            type="button"
+            class="modal-close"
+            data-close="wishlistModal"
         >
-            ×
+            <i class="fa-solid fa-xmark"></i>
         </button>
 
-        <h2>
-            ♡ My Wishlist
-        </h2>
+        <h2>My Wishlist ❤️</h2>
 
-        <p>
-            Your favourite products 💜
-        </p>
+        <div
+            id="wishlistItems"
+            class="wishlist-grid"
+        ></div>
 
-        <div id="wishlistItems"></div>
+        <div
+            id="emptyWishlist"
+            class="empty-state"
+        >
+            <i class="fa-regular fa-heart"></i>
+            <h3>Your wishlist is empty</h3>
+            <p>Add products you love.</p>
+        </div>
 
     </div>
 
 </div>
 
 
-<!-- ================= ACCOUNT MODAL ================= -->
+<!-- =====================================================
+     ACCOUNT MODAL
+===================================================== -->
 
-<div
-    id="accountModal"
-    class="modal"
-    aria-hidden="true"
->
+<div id="accountModal" class="modal">
 
-    <div class="modal-content account-box">
+    <div class="modal-backdrop" data-close="accountModal"></div>
+
+    <div class="modal-content auth-content">
 
         <button
-            id="closeAccount"
-            class="close-btn"
-            type="button"
+            class="modal-close"
+            data-close="accountModal"
         >
-            ×
+            <i class="fa-solid fa-xmark"></i>
         </button>
 
+        <div class="auth-header">
 
-        <!-- ================= LOGIN ================= -->
+            <h2>My Account</h2>
 
-        <div id="loginSection">
-
-            <h2>
-                👤 Login
-            </h2>
-
-            <p>
-                Welcome back 💜
-            </p>
-
-
-            <!-- EMAIL LOGIN -->
-
-            <form id="loginForm">
-
-                <input
-                    type="email"
-                    id="loginEmail"
-                    placeholder="Email"
-                    autocomplete="email"
-                    required
-                >
-
-
-                <div class="password-wrapper">
-
-                    <input
-                        type="password"
-                        id="loginPassword"
-                        placeholder="Password"
-                        autocomplete="current-password"
-                        required
-                    >
-
-                    <button
-                        type="button"
-                        class="password-toggle"
-                        data-target="loginPassword"
-                        aria-label="Show password"
-                    >
-                        👁️
-                    </button>
-
-                </div>
-
-
-                <button
-                    type="submit"
-                    id="loginBtn"
-                    class="btn"
-                >
-                    Login with Email
-                </button>
-
-            </form>
-
-
-            <!-- DIVIDER -->
-
-            <div class="login-divider">
-
-                <span>
-                    OR
-                </span>
-
-            </div>
-
-
-            <!-- PHONE LOGIN -->
-
-            <div id="phoneLoginSection">
-
-                <input
-                    type="tel"
-                    id="phoneNumber"
-                    placeholder="Phone Number (+91XXXXXXXXXX)"
-                    autocomplete="tel"
-                >
-
-
-                <div id="recaptcha-container"></div>
-
-
-                <button
-                    type="button"
-                    id="sendOtpBtn"
-                    class="btn"
-                >
-                    Send OTP
-                </button>
-
-
-                <!-- OTP -->
-
-                <div
-                    id="otpSection"
-                    style="display:none;"
-                >
-
-                    <input
-                        type="text"
-                        id="otpCode"
-                        placeholder="Enter OTP"
-                        maxlength="6"
-                        inputmode="numeric"
-                        autocomplete="one-time-code"
-                    >
-
-
-                    <button
-                        type="button"
-                        id="verifyOtpBtn"
-                        class="btn"
-                    >
-                        Verify OTP
-                    </button>
-
-                </div>
-
-            </div>
-
-
-            <!-- REGISTER SWITCH -->
-
-            <p class="switch-text">
-
-                Don't have an account?
-
-                <button
-                    id="showRegister"
-                    type="button"
-                >
-                    Register
-                </button>
-
+            <p id="accountWelcome">
+                Login or create your account.
             </p>
 
         </div>
 
-
-        <!-- ================= REGISTER ================= -->
-
-        <div
-            id="registerSection"
-            style="display:none;"
+        <button
+            id="openLogin"
+            class="btn btn-primary form-submit"
         >
+            Login
+        </button>
 
-            <h2>
-                📝 Create Account
-            </h2>
+        <button
+            id="openRegister"
+            class="btn btn-outline form-submit"
+        >
+            Create Account
+        </button>
 
-            <p>
-                Join Saru_Craft_World 💜
-            </p>
+    </div>
+
+</div>
 
 
-            <form id="registerForm">
+<!-- =====================================================
+     LOGIN MODAL
+===================================================== -->
+
+<div id="loginModal" class="modal">
+
+    <div class="modal-backdrop" data-close="loginModal"></div>
+
+    <div class="modal-content auth-content">
+
+        <button
+            class="modal-close"
+            data-close="loginModal"
+        >
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="auth-header">
+            <h2>Login</h2>
+            <p>Login to continue shopping.</p>
+        </div>
+
+
+        <div class="auth-toggle">
+
+            <button
+                class="auth-method active"
+                data-method="email"
+                data-form="login"
+            >
+                Email
+            </button>
+
+            <button
+                class="auth-method"
+                data-method="phone"
+                data-form="login"
+            >
+                Phone
+            </button>
+
+        </div>
+
+
+        <form id="loginForm">
+
+            <div class="form-group">
+
+                <label id="loginContactLabel">
+                    Email
+                </label>
 
                 <input
-                    type="text"
+                    id="loginContact"
+                    type="email"
+                    placeholder="Enter your email"
+                    required
+                >
+
+            </div>
+
+
+            <div
+                id="loginPasswordGroup"
+                class="form-group"
+            >
+
+                <label>Password</label>
+
+                <input
+                    id="loginPassword"
+                    type="password"
+                    placeholder="Enter password"
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn btn-primary form-submit"
+            >
+                Continue
+            </button>
+
+        </form>
+
+
+        <p class="auth-switch">
+            Don't have an account?
+            <button id="switchToRegister">
+                Register
+            </button>
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     REGISTER MODAL
+===================================================== -->
+
+<div id="registerModal" class="modal">
+
+    <div class="modal-backdrop" data-close="registerModal"></div>
+
+    <div class="modal-content auth-content">
+
+        <button
+            class="modal-close"
+            data-close="registerModal"
+        >
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div class="auth-header">
+            <h2>Create Account</h2>
+            <p>Create your Saru_Crafts_World account.</p>
+        </div>
+
+
+        <div class="auth-toggle">
+
+            <button
+                class="auth-method active"
+                data-method="email"
+                data-form="register"
+            >
+                Email
+            </button>
+
+            <button
+                class="auth-method"
+                data-method="phone"
+                data-form="register"
+            >
+                Phone
+            </button>
+
+        </div>
+
+
+        <form id="registerForm">
+
+            <div class="form-group">
+
+                <label>Name</label>
+
+                <input
                     id="registerName"
-                    placeholder="Your Name"
-                    autocomplete="name"
+                    type="text"
+                    placeholder="Your name"
                     required
                 >
-
-
-                <input
-                    type="email"
-                    id="registerEmail"
-                    placeholder="Email"
-                    autocomplete="email"
-                    required
-                >
-
-
-                <div class="password-wrapper">
-
-                    <input
-                        type="password"
-                        id="registerPassword"
-                        placeholder="Password"
-                        autocomplete="new-password"
-                        required
-                    >
-
-                    <button
-                        type="button"
-                        class="password-toggle"
-                        data-target="registerPassword"
-                        aria-label="Show password"
-                    >
-                        👁️
-                    </button>
-
-                </div>
-
-
-                <div class="password-wrapper">
-
-                    <input
-                        type="password"
-                        id="confirmPassword"
-                        placeholder="Confirm Password"
-                        autocomplete="new-password"
-                        required
-                    >
-
-                    <button
-                        type="button"
-                        class="password-toggle"
-                        data-target="confirmPassword"
-                        aria-label="Show password"
-                    >
-                        👁️
-                    </button>
-
-                </div>
-
-
-                <button
-                    type="submit"
-                    id="registerBtn"
-                    class="btn"
-                >
-                    Register
-                </button>
-
-            </form>
-
-
-            <p class="switch-text">
-
-                Already have an account?
-
-                <button
-                    id="showLogin"
-                    type="button"
-                >
-                    Login
-                </button>
-
-            </p>
-
-        </div>
-
-
-        <!-- ================= USER ================= -->
-
-        <div
-            id="userSection"
-            style="display:none;"
-        >
-
-            <h2>
-                💜 My Account
-            </h2>
-
-            <h3 id="welcomeUser">
-                Welcome!
-            </h3>
-
-
-            <button
-                id="myOrdersBtn"
-                class="btn"
-                type="button"
-            >
-                📦 My Orders
-            </button>
-
-
-            <button
-                id="logoutBtn"
-                class="btn logout-btn"
-                type="button"
-            >
-                🚪 Logout
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<!-- ================= ORDERS MODAL ================= -->
-
-<div
-    id="ordersModal"
-    class="modal"
-    aria-hidden="true"
->
-
-    <div class="modal-content orders-box">
-
-        <button
-            id="closeOrders"
-            class="close-btn"
-            type="button"
-        >
-            ×
-        </button>
-
-        <h2>
-            📦 My Orders
-        </h2>
-
-        <p>
-            Your purchased products 💜
-        </p>
-
-        <div id="ordersList"></div>
-
-    </div>
-
-</div>
-
-
-<!-- ================= CHECKOUT MODAL ================= -->
-
-<div
-    id="checkoutModal"
-    class="modal"
-    aria-hidden="true"
->
-
-    <div class="modal-content checkout-box">
-
-        <button
-            id="closeCheckout"
-            class="close-btn"
-            type="button"
-        >
-            ×
-        </button>
-
-
-        <!-- ================= STEP 1 ================= -->
-
-        <div id="addressStep">
-
-            <div class="step-title">
-
-                <span>
-                    1
-                </span>
-
-                <div>
-
-                    <small>
-                        DELIVERY
-                    </small>
-
-                    <h2>
-                        Delivery Address
-                    </h2>
-
-                </div>
 
             </div>
 
 
-            <form id="checkoutForm">
+            <div class="form-group">
+
+                <label id="registerContactLabel">
+                    Email
+                </label>
 
                 <input
-                    type="text"
+                    id="registerContact"
+                    type="email"
+                    placeholder="Enter your email"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Password</label>
+
+                <input
+                    id="registerPassword"
+                    type="password"
+                    placeholder="Create a password"
+                    minlength="6"
+                    required
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn btn-primary form-submit"
+            >
+                Create Account
+            </button>
+
+        </form>
+
+
+        <p class="auth-switch">
+            Already have an account?
+            <button id="switchToLogin">
+                Login
+            </button>
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     OTP MODAL
+===================================================== -->
+
+<div id="otpModal" class="modal">
+
+    <div class="modal-backdrop" data-close="otpModal"></div>
+
+    <div class="modal-content otp-content">
+
+        <button
+            class="modal-close"
+            data-close="otpModal"
+        >
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <h2>Verify OTP</h2>
+
+        <p>
+            Enter the 6-digit OTP sent to
+            <strong id="otpDestination"></strong>
+        </p>
+
+        <form id="otpForm">
+
+            <div class="otp-inputs">
+
+                <input class="otp-input" maxlength="1" inputmode="numeric">
+                <input class="otp-input" maxlength="1" inputmode="numeric">
+                <input class="otp-input" maxlength="1" inputmode="numeric">
+                <input class="otp-input" maxlength="1" inputmode="numeric">
+                <input class="otp-input" maxlength="1" inputmode="numeric">
+                <input class="otp-input" maxlength="1" inputmode="numeric">
+
+            </div>
+
+            <button
+                type="submit"
+                class="btn btn-primary form-submit"
+            >
+                Verify
+            </button>
+
+        </form>
+
+        <button id="resendOtp" class="resend-btn">
+            Resend OTP
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     CHECKOUT MODAL
+===================================================== -->
+
+<div id="checkoutModal" class="modal">
+
+    <div class="modal-backdrop" data-close="checkoutModal"></div>
+
+    <div class="modal-content checkout-content">
+
+        <button
+            class="modal-close"
+            data-close="checkoutModal"
+        >
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <h2>Checkout</h2>
+
+
+        <div
+            id="checkoutItems"
+            class="checkout-items"
+        ></div>
+
+        <div class="checkout-total">
+            <span>Total</span>
+            <strong id="checkoutTotal">₹0</strong>
+        </div>
+
+
+        <form id="checkoutForm">
+
+            <div class="form-group">
+
+                <label for="customerName">
+                    Name
+                </label>
+
+                <input
                     id="customerName"
-                    placeholder="Full Name"
+                    type="text"
                     required
                 >
 
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="customerPhone">
+                    Phone
+                </label>
 
                 <input
-                    type="tel"
                     id="customerPhone"
-                    placeholder="Phone Number"
+                    type="tel"
+                    inputmode="numeric"
                     required
                 >
 
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="customerAddress">
+                    Delivery Address
+                </label>
 
                 <textarea
                     id="customerAddress"
-                    placeholder="Address"
                     rows="4"
                     required
                 ></textarea>
 
-
-                <textarea
-                    id="confirmAddress"
-                    placeholder="Confirm Address"
-                    rows="4"
-                    required
-                ></textarea>
+            </div>
 
 
-                <button
-                    id="continueToPayment"
-                    class="btn"
-                    type="button"
-                >
-                    Continue to Payment →
-                </button>
+            <div class="form-group">
 
-            </form>
+                <label>Payment Method</label>
 
-        </div>
+                <div class="payment-options">
 
+                    <label class="payment-option">
 
-        <!-- ================= STEP 2 ================= -->
+                        <input
+                            type="radio"
+                            name="paymentMethod"
+                            value="Cash on Delivery"
+                            checked
+                        >
 
-        <div
-            id="paymentStep"
-            style="display:none;"
-        >
+                        Cash on Delivery
 
-            <div class="step-title">
+                    </label>
 
-                <span>
-                    2
-                </span>
+                    <label class="payment-option">
 
-                <div>
+                        <input
+                            type="radio"
+                            name="paymentMethod"
+                            value="UPI"
+                        >
 
-                    <small>
-                        PAYMENT
-                    </small>
+                        UPI
 
-                    <h2>
-                        Payment Method
-                    </h2>
+                    </label>
 
                 </div>
 
             </div>
 
 
-            <div class="payment-options">
+            <button
+                type="submit"
+                class="btn btn-primary place-order whatsapp-order-btn"
+            >
+                <i class="fa-brands fa-whatsapp"></i>
+                Place Order on WhatsApp
+            </button>
 
-                <label class="payment-option">
-
-                    <input
-                        type="radio"
-                        name="paymentMethod"
-                        value="cod"
-                        checked
-                    >
-
-                    <span>
-
-                        💵
-
-                        <strong>
-                            Cash on Delivery
-                        </strong>
-
-                    </span>
-
-                </label>
-
-
-                <label class="payment-option">
-
-                    <input
-                        type="radio"
-                        name="paymentMethod"
-                        value="upi"
-                    >
-
-                    <span>
-
-                        📱
-
-                        <strong>
-                            UPI
-                        </strong>
-
-                    </span>
-
-                </label>
-
-            </div>
-
-
-            <!-- ORDER SUMMARY -->
-
-            <div class="order-summary">
-
-                <h3>
-                    Order Summary
-                </h3>
-
-
-                <p>
-
-                    <strong>
-                        Name:
-                    </strong>
-
-                    <span id="summaryName"></span>
-
-                </p>
-
-
-                <p>
-
-                    <strong>
-                        Phone:
-                    </strong>
-
-                    <span id="summaryPhone"></span>
-
-                </p>
-
-
-                <p>
-
-                    <strong>
-                        Address:
-                    </strong>
-
-                    <span id="summaryAddress"></span>
-
-                </p>
-
-
-                <div class="summary-total">
-
-                    <span>
-                        Total
-                    </span>
-
-                    <strong>
-
-                        ₹<span id="summaryTotal">0</span>
-
-                    </strong>
-
-                </div>
-
-            </div>
-
-
-            <!-- CHECKOUT BUTTONS -->
-
-            <div class="checkout-buttons">
-
-                <button
-                    id="backAddress"
-                    class="btn secondary-btn"
-                    type="button"
-                >
-                    ← Back
-                </button>
-
-
-                <button
-                    id="placeOrder"
-                    class="btn"
-                    type="button"
-                >
-                    Place Order ❤️
-                </button>
-
-            </div>
-
-        </div>
+        </form>
 
     </div>
 
 </div>
 
 
-<!-- ================= FOOTER ================= -->
+<!-- =====================================================
+     CUSTOM ORDER MODAL
+===================================================== -->
 
-<footer>
+<div id="customOrderModal" class="modal">
 
-    <div class="footer-logo">
-        🧶 Saru_Craft_World
+    <div class="modal-backdrop" data-close="customOrderModal"></div>
+
+    <div class="modal-content custom-modal-content">
+
+        <button
+            class="modal-close"
+            data-close="customOrderModal"
+        >
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <h2>Custom Order</h2>
+
+        <form id="customOrderForm">
+
+            <div class="form-group">
+
+                <label>Name</label>
+
+                <input
+                    id="customName"
+                    type="text"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>Phone</label>
+
+                <input
+                    id="customPhone"
+                    type="tel"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label>What would you like?</label>
+
+                <textarea
+                    id="customRequest"
+                    rows="5"
+                    placeholder="Describe your custom crochet request..."
+                    required
+                ></textarea>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn btn-primary form-submit"
+            >
+                <i class="fa-brands fa-whatsapp"></i>
+                Send Request
+            </button>
+
+        </form>
+
     </div>
 
-    <p>
-        Handmade with love
-        &nbsp;•&nbsp;
-        One stitch at a time 💜
-    </p>
-
-    <p>
-
-        ©
-        <span id="currentYear"></span>
-
-        Saru_Craft_World.
-        All rights reserved.
-
-    </p>
-
-</footer>
+</div>
 
 
-<!-- ================= JAVASCRIPT ================= -->
+<!-- =====================================================
+     SUCCESS MODAL
+===================================================== -->
 
-<script
-    type="module"
-    src="script.js"
-></script>
+<div id="successModal" class="modal">
+
+    <div class="modal-backdrop" data-close="successModal"></div>
+
+    <div class="modal-content success-content">
+
+        <div class="success-icon">
+            <i class="fa-solid fa-check"></i>
+        </div>
+
+        <h2>Order Ready! 🎉</h2>
+
+        <p>
+            WhatsApp has been opened with your order details.
+            Please press Send in WhatsApp to complete the order.
+        </p>
+
+        <button
+            class="btn btn-primary"
+            data-close="successModal"
+        >
+            Continue Shopping
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     TOAST
+===================================================== -->
+
+<div id="toast" class="toast">
+    <span id="toastMessage"></span>
+</div>
+
+
+<!-- =====================================================
+     FLOATING WHATSAPP
+===================================================== -->
+
+<a
+    id="floatingWhatsapp"
+    href="#"
+    class="floating-whatsapp"
+    aria-label="WhatsApp"
+>
+    <i class="fa-brands fa-whatsapp"></i>
+</a>
+
+
+<!-- =====================================================
+     MOBILE BOTTOM NAV
+===================================================== -->
+
+<nav class="mobile-bottom-nav">
+
+    <a href="#home" class="active">
+        <i class="fa-solid fa-house"></i>
+        <span>Home</span>
+    </a>
+
+    <a href="#shop">
+        <i class="fa-solid fa-store"></i>
+        <span>Shop</span>
+    </a>
+
+    <button id="bottomWishlist">
+        <i class="fa-regular fa-heart"></i>
+        <span>Wishlist</span>
+        <span
+            id="bottomWishlistCount"
+            class="bottom-badge"
+        >
+            0
+        </span>
+    </button>
+
+    <button id="bottomCart">
+        <i class="fa-solid fa-bag-shopping"></i>
+        <span>Cart</span>
+        <span
+            id="bottomCartCount"
+            class="bottom-badge"
+        >
+            0
+        </span>
+    </button>
+
+    <button id="bottomAccount">
+        <i class="fa-regular fa-user"></i>
+        <span>Account</span>
+    </button>
+
+</nav>
+
+
+<script src="script.js"></script>
 
 </body>
-</html>
+                    </html>
