@@ -1,2596 +1,3101 @@
-// ==========================================
-// SARU_CRAFT_WORLD - COMPLETE SCRIPT
-// ==========================================
-
-// ---------- FIREBASE ----------
-
-import { initializeApp } from
-    "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
-import {
-    getAuth,
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-    signOut,
-    onAuthStateChanged
-} from
-    "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-import {
-    getFirestore,
-    doc,
-    setDoc,
-    getDoc
-} from
-    "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+/* =========================================================
+   SARU_CRAFTS_WORLD
+   FINAL MATCHED JAVASCRIPT
+========================================================= */
 
 
-// ==========================================
-// FIREBASE CONFIG
-// ==========================================
+/* =========================================================
+   SETTINGS
+========================================================= */
 
-const firebaseConfig = {
-    apiKey: "AIzaSyC_TBMI_Vb0vaGmWlXUKziphlI_7fUhk10",
-    authDomain: "saru07-cb76f.firebaseapp.com",
-    projectId: "saru07-cb76f",
-    storageBucket: "saru07-cb76f.firebasestorage.app",
-    messagingSenderId: "356038184572",
-    appId: "1:356038184572:web:e5eb8a867086718af243f9",
-    measurementId: "G-MJ8MCNVN5Z"
-};
+const WHATSAPP_NUMBER = "917025337305";
+const INSTAGRAM_USERNAME = "saru_craft_world";
+const EMAIL_ADDRESS = "sarusb07@gmail.com";
+
+const FREE_DELIVERY_LIMIT = 2000;
 
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-
-// ==========================================
-// PRODUCTS
-// ==========================================
+/* =========================================================
+   PRODUCTS
+========================================================= */
 
 const products = [
+
     {
-        id: "dress001",
+        id: 1,
         name: "Yellow Baby Girl Dress",
         price: 1500,
         category: "dress",
         image: "picture/yellow-dress.jpg",
-        rating: 5
+        rating: 5,
+        badge: "Handmade",
+
+        colors: [
+            "#f5d76e",
+            "#f3b6c0",
+            "#ffffff",
+            "#b7cdb0"
+        ],
+
+        sizes: [
+            "0-3M",
+            "3-6M",
+            "6-12M",
+            "1-2Y"
+        ],
+
+        delivery: "Estimated delivery: 4–7 days",
+
+        description:
+            "Beautiful handmade crochet dress for baby girls."
     },
 
     {
-        id: "headband001",
+        id: 2,
         name: "Tulip Headband",
         price: 299,
         category: "accessories",
         image: "picture/headband.jpg",
-        rating: 5
+        rating: 5,
+        badge: "Best Seller",
+
+        colors: [
+            "#f4a9b7",
+            "#e8c86a",
+            "#ffffff",
+            "#8fa98b"
+        ],
+
+        sizes: [
+            "Free Size"
+        ],
+
+        delivery: "Estimated delivery: 3–5 days",
+
+        description:
+            "Cute handmade crochet tulip headband."
     },
 
     {
-        id: "bag001",
+        id: 3,
         name: "Crochet Hand Bag",
         price: 800,
         category: "bags",
         image: "picture/hand-bag.jpg",
-        rating: 5
+        rating: 5,
+        badge: "New Arrival",
+
+        colors: [
+            "#f4c8cf",
+            "#d7c29e",
+            "#8fa98b",
+            "#ffffff"
+        ],
+
+        sizes: [
+            "Standard"
+        ],
+
+        delivery: "Estimated delivery: 4–7 days",
+
+        description:
+            "Stylish handmade crochet handbag for everyday use."
     },
 
     {
-        id: "jellyfish001",
+        id: 4,
         name: "Crochet Jellyfish",
         price: 100,
         category: "toys",
         image: "picture/jellyfish.jpg",
-        rating: 5
+        rating: 5,
+        badge: "Cute Pick",
+
+        colors: [
+            "#f4c8cf",
+            "#b9d5ec",
+            "#cdb7e9",
+            "#ffffff"
+        ],
+
+        sizes: [
+            "Small"
+        ],
+
+        delivery: "Estimated delivery: 3–5 days",
+
+        description:
+            "Adorable handmade crochet jellyfish toy."
     }
+
 ];
 
 
-// ==========================================
-// LOCAL STORAGE
-// ==========================================
+/* =========================================================
+   STORAGE
+========================================================= */
 
-let cart = JSON.parse(
-    localStorage.getItem("saruCart") || "[]"
+const STORAGE = {
+    cart: "saruCart",
+    wishlist: "saruWishlist",
+    orders: "saruOrders",
+    loggedIn: "saruLoggedIn",
+    user: "saruUser",
+    pendingAction: "saruPendingAction",
+    pendingAuth: "saruPendingAuth",
+    tempUser: "saruTempUser",
+    darkMode: "saruDarkMode"
+};
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+let cart =
+    JSON.parse(localStorage.getItem(STORAGE.cart)) || [];
+
+let wishlist =
+    JSON.parse(localStorage.getItem(STORAGE.wishlist)) || [];
+
+let currentProduct = null;
+let currentQuantity = 1;
+let currentImageIndex = 0;
+let currentImages = [];
+
+let currentFilter = "all";
+let currentSearch = "";
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function $(id) {
+    return document.getElementById(id);
+}
+
+function saveData(key, value) {
+    localStorage.setItem(key, JSON.stringify(value));
+}
+
+function formatPrice(value) {
+    return "₹" + Number(value).toLocaleString("en-IN");
+}
+
+function showToast(message) {
+
+    const toast = $("toast");
+    const text = $("toastMessage");
+
+    if (!toast || !text) return;
+
+    text.textContent = message;
+
+    toast.classList.add("show");
+
+    clearTimeout(window.toastTimer);
+
+    window.toastTimer = setTimeout(() => {
+        toast.classList.remove("show");
+    }, 2500);
+}
+
+
+/* =========================================================
+   MODALS
+========================================================= */
+
+function openModal(id) {
+
+    const modal = $(id);
+
+    if (!modal) return;
+
+    closeCart();
+
+    modal.classList.add("active");
+
+    document.body.classList.add("no-scroll");
+}
+
+function closeModal(id) {
+
+    const modal = $(id);
+
+    if (!modal) return;
+
+    modal.classList.remove("active");
+
+    if (!document.querySelector(".modal.active")) {
+        document.body.classList.remove("no-scroll");
+    }
+}
+
+function closeAllModals() {
+
+    document.querySelectorAll(".modal.active").forEach(modal => {
+        modal.classList.remove("active");
+    });
+
+    document.body.classList.remove("no-scroll");
+}
+
+
+/* =========================================================
+   INTRO
+========================================================= */
+
+window.addEventListener("load", () => {
+
+    setTimeout(() => {
+
+        const intro = $("introScreen");
+
+        if (intro) {
+            intro.style.display = "none";
+        }
+
+    }, 2900);
+
+});
+
+
+/* =========================================================
+   PRODUCT RENDER
+========================================================= */
+
+function renderProducts() {
+
+    const grid = $("productGrid");
+    const noProducts = $("noProducts");
+
+    if (!grid) return;
+
+    let list = [...products];
+
+    if (currentFilter !== "all") {
+
+        list = list.filter(
+            product =>
+                product.category === currentFilter
+        );
+    }
+
+    if (currentSearch.trim()) {
+
+        const search = currentSearch
+            .toLowerCase()
+            .trim();
+
+        list = list.filter(product =>
+            product.name
+                .toLowerCase()
+                .includes(search)
+        );
+    }
+
+
+    const sort = $("sortProducts")?.value;
+
+    if (sort === "low") {
+
+        list.sort((a, b) => a.price - b.price);
+
+    } else if (sort === "high") {
+
+        list.sort((a, b) => b.price - a.price);
+
+    } else if (sort === "name") {
+
+        list.sort((a, b) =>
+            a.name.localeCompare(b.name)
+        );
+    }
+
+
+    grid.innerHTML = "";
+
+
+    if (!list.length) {
+
+        if (noProducts) {
+            noProducts.style.display = "block";
+        }
+
+        return;
+    }
+
+
+    if (noProducts) {
+        noProducts.style.display = "none";
+    }
+
+
+    list.forEach(product => {
+
+        const isWishlisted =
+            wishlist.includes(product.id);
+
+        const stars =
+            "★".repeat(product.rating) +
+            "☆".repeat(5 - product.rating);
+
+
+        const card =
+            document.createElement("article");
+
+        card.className = "product-card";
+
+
+        card.innerHTML = `
+
+            <div class="product-image-wrap">
+
+                <img
+                    src="${product.image}"
+                    alt="${product.name}"
+                    loading="lazy"
+                    onerror="this.src='picture/Logo.jpg'"
+                >
+
+                <div class="product-badges">
+                    <span class="product-badge">
+                        ${product.badge}
+                    </span>
+                </div>
+
+                <button
+                    class="product-wishlist ${isWishlisted ? "active" : ""}"
+                    data-wishlist="${product.id}"
+                    aria-label="Wishlist"
+                >
+                    <i class="${isWishlisted ? "fa-solid" : "fa-regular"} fa-heart"></i>
+                </button>
+
+            </div>
+
+
+            <div class="product-info">
+
+                <div class="product-category">
+                    ${product.category}
+                </div>
+
+                <h3>${product.name}</h3>
+
+                <div class="rating">
+                    ${stars}
+                </div>
+
+                <div class="product-bottom">
+
+                    <div class="product-price">
+                        ${formatPrice(product.price)}
+                    </div>
+
+                    <button
+                        class="add-cart"
+                        data-cart="${product.id}"
+                        aria-label="Add to cart"
+                    >
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        card.addEventListener("click", event => {
+
+            if (
+                event.target.closest("[data-wishlist]") ||
+                event.target.closest("[data-cart]")
+            ) {
+                return;
+            }
+
+            openProduct(product.id);
+        });
+
+
+        grid.appendChild(card);
+    });
+
+
+    grid.querySelectorAll("[data-wishlist]")
+        .forEach(button => {
+
+            button.addEventListener("click", event => {
+
+                event.stopPropagation();
+
+                toggleWishlist(
+                    Number(button.dataset.wishlist)
+                );
+            });
+
+        });
+
+
+    grid.querySelectorAll("[data-cart]")
+        .forEach(button => {
+
+            button.addEventListener("click", event => {
+
+                event.stopPropagation();
+
+                addToCart(
+                    Number(button.dataset.cart)
+                );
+            });
+
+        });
+
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+function performSearch(value) {
+
+    currentSearch = value;
+
+    renderProducts();
+}
+
+$("searchInput")?.addEventListener(
+    "input",
+    event => {
+        performSearch(event.target.value);
+    }
 );
 
-let wishlist = JSON.parse(
-    localStorage.getItem("saruWishlist") || "[]"
-);
-
-let orders = JSON.parse(
-    localStorage.getItem("saruOrders") || "[]"
-);
-
-
-// Make IDs strings
-cart = cart.map(item => ({
-    ...item,
-    id: String(item.id),
-    quantity: Number(item.quantity) || 1
-}));
-
-wishlist = wishlist.map(id => String(id));
-
-
-// Remove invalid products
-cart = cart.filter(item =>
-    getProductById(item.id)
-);
-
-wishlist = wishlist.filter(id =>
-    products.some(product =>
-        String(product.id) === String(id)
-    )
+$("shopSearchInput")?.addEventListener(
+    "input",
+    event => {
+        performSearch(event.target.value);
+    }
 );
 
 
-// ==========================================
-// HELPERS
-// ==========================================
+/* =========================================================
+   SEARCH TOGGLE
+========================================================= */
 
-function getProductById(id) {
+$("searchToggle")?.addEventListener(
+    "click",
+    () => {
 
-    return products.find(product =>
-        String(product.id) === String(id)
+        $("searchArea")?.classList.toggle("active");
+
+        if ($("searchArea")?.classList.contains("active")) {
+            $("searchInput")?.focus();
+        }
+    }
+);
+
+
+$("closeSearch")?.addEventListener(
+    "click",
+    () => {
+        $("searchArea")?.classList.remove("active");
+    }
+);
+
+
+/* =========================================================
+   FILTER
+========================================================= */
+
+document.querySelectorAll(".filter-btn")
+    .forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            currentFilter =
+                button.dataset.filter || "all";
+
+
+            document
+                .querySelectorAll(".filter-btn")
+                .forEach(btn =>
+                    btn.classList.remove("active")
+                );
+
+
+            button.classList.add("active");
+
+            renderProducts();
+
+            document
+                .getElementById("shop")
+                ?.scrollIntoView({
+                    behavior: "smooth"
+                });
+
+        });
+
+    });
+
+
+/* =========================================================
+   CATEGORY CARDS
+========================================================= */
+
+document.querySelectorAll(".category-card")
+    .forEach(card => {
+
+        card.addEventListener("click", () => {
+
+            const category =
+                card.dataset.category;
+
+            currentFilter = category;
+
+            document
+                .querySelectorAll(".filter-btn")
+                .forEach(button => {
+
+                    button.classList.toggle(
+                        "active",
+                        button.dataset.filter === category
+                    );
+
+                });
+
+            renderProducts();
+
+            document
+                .getElementById("shop")
+                ?.scrollIntoView({
+                    behavior: "smooth"
+                });
+
+        });
+
+    });
+
+
+/* =========================================================
+   SORT
+========================================================= */
+
+$("sortProducts")?.addEventListener(
+    "change",
+    renderProducts
+);
+
+
+/* =========================================================
+   PRODUCT MODAL
+========================================================= */
+
+function openProduct(id) {
+
+    const product =
+        products.find(item => item.id === id);
+
+    if (!product) return;
+
+    currentProduct = product;
+
+    currentQuantity = 1;
+
+    currentImageIndex = 0;
+
+    currentImages = [product.image];
+
+
+    $("modalProductName").textContent =
+        product.name;
+
+    $("modalProductCategory").textContent =
+        product.category;
+
+    $("modalPrice").textContent =
+        formatPrice(product.price);
+
+    $("modalDescription").textContent =
+        product.description;
+
+    $("modalDelivery").textContent =
+        product.delivery;
+
+    $("modalQuantity").textContent =
+        currentQuantity;
+
+    $("modalStars").textContent =
+        "★".repeat(product.rating) +
+        "☆".repeat(5 - product.rating);
+
+    $("modalRating").textContent =
+        `${product.rating}.0 / 5`;
+
+
+    renderColors(product);
+
+    renderSizes(product);
+
+    renderGallery();
+
+    $("customizationText").value = "";
+
+
+    openModal("productModal");
+}
+
+
+/* =========================================================
+   COLORS
+========================================================= */
+
+function renderColors(product) {
+
+    const container = $("colorOptions");
+
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    const colors = product.colors || [];
+
+    if (!colors.length) {
+
+        $("colorOptionGroup").style.display = "none";
+
+        return;
+    }
+
+    $("colorOptionGroup").style.display = "block";
+
+
+    colors.forEach((color, index) => {
+
+        const button =
+            document.createElement("button");
+
+        button.className =
+            "color-option" +
+            (index === 0 ? " active" : "");
+
+        button.style.backgroundColor = color;
+
+        button.dataset.color = color;
+
+        button.type = "button";
+
+
+        button.addEventListener("click", () => {
+
+            container
+                .querySelectorAll(".color-option")
+                .forEach(item =>
+                    item.classList.remove("active")
+                );
+
+            button.classList.add("active");
+
+            $("selectedColor").textContent =
+                color;
+
+        });
+
+
+        container.appendChild(button);
+
+    });
+
+
+    $("selectedColor").textContent =
+        colors[0];
+}
+
+
+/* =========================================================
+   SIZES
+========================================================= */
+
+function renderSizes(product) {
+
+    const container = $("sizeOptions");
+
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    const sizes = product.sizes || [];
+
+    if (!sizes.length) {
+
+        $("sizeOptionGroup").style.display = "none";
+
+        return;
+    }
+
+    $("sizeOptionGroup").style.display = "block";
+
+
+    sizes.forEach((size, index) => {
+
+        const button =
+            document.createElement("button");
+
+        button.type = "button";
+
+        button.className =
+            "size-option" +
+            (index === 0 ? " active" : "");
+
+        button.textContent = size;
+
+        button.dataset.size = size;
+
+
+        button.addEventListener("click", () => {
+
+            container
+                .querySelectorAll(".size-option")
+                .forEach(item =>
+                    item.classList.remove("active")
+                );
+
+            button.classList.add("active");
+
+            $("selectedSize").textContent =
+                size;
+        });
+
+
+        container.appendChild(button);
+
+    });
+
+
+    $("selectedSize").textContent =
+        sizes[0];
+}
+
+
+/* =========================================================
+   GALLERY
+========================================================= */
+
+function renderGallery() {
+
+    const mainImage = $("modalMainImage");
+    const thumbnails = $("thumbnailContainer");
+
+    if (!mainImage || !thumbnails) return;
+
+    const image =
+        currentImages[currentImageIndex];
+
+    mainImage.src = image;
+
+    mainImage.alt =
+        currentProduct?.name || "Product";
+
+
+    $("imageCounter").textContent =
+        `${currentImageIndex + 1} / ${currentImages.length}`;
+
+
+    thumbnails.innerHTML = "";
+
+
+    currentImages.forEach((src, index) => {
+
+        const img =
+            document.createElement("img");
+
+        img.src = src;
+
+        img.alt =
+            `${currentProduct?.name || "Product"} image ${index + 1}`;
+
+        img.className =
+            index === currentImageIndex
+                ? "active"
+                : "";
+
+
+        img.addEventListener("click", () => {
+
+            currentImageIndex = index;
+
+            renderGallery();
+        });
+
+
+        thumbnails.appendChild(img);
+
+    });
+
+}
+
+
+$("prevImage")?.addEventListener(
+    "click",
+    () => {
+
+        if (currentImages.length <= 1) return;
+
+        currentImageIndex =
+            (currentImageIndex - 1 + currentImages.length) %
+            currentImages.length;
+
+        renderGallery();
+    }
+);
+
+
+$("nextImage")?.addEventListener(
+    "click",
+    () => {
+
+        if (currentImages.length <= 1) return;
+
+        currentImageIndex =
+            (currentImageIndex + 1) %
+            currentImages.length;
+
+        renderGallery();
+    }
+);
+
+
+/* =========================================================
+   QUANTITY
+========================================================= */
+
+$("modalQtyMinus")?.addEventListener(
+    "click",
+    () => {
+
+        if (currentQuantity > 1) {
+            currentQuantity--;
+            $("modalQuantity").textContent =
+                currentQuantity;
+        }
+    }
+);
+
+
+$("modalQtyPlus")?.addEventListener(
+    "click",
+    () => {
+
+        if (currentQuantity < 20) {
+            currentQuantity++;
+            $("modalQuantity").textContent =
+                currentQuantity;
+        }
+    }
+);
+
+
+/* =========================================================
+   CART
+========================================================= */
+
+function addToCart(id, quantity = 1) {
+
+    const product =
+        products.find(item => item.id === id);
+
+    if (!product) return;
+
+
+    const existing =
+        cart.find(item =>
+            item.id === id &&
+            !item.customization
+        );
+
+
+    if (existing) {
+
+        existing.quantity += quantity;
+
+    } else {
+
+        cart.push({
+            id: product.id,
+            name: product.name,
+            price: product.price,
+            image: product.image,
+            quantity: quantity
+        });
+
+    }
+
+
+    saveData(STORAGE.cart, cart);
+
+    updateCartUI();
+
+    showToast(
+        `${product.name} added to cart 🛒`
     );
 }
 
 
-function saveCart() {
+function addCurrentProductToCart() {
 
-    localStorage.setItem(
-        "saruCart",
-        JSON.stringify(cart)
+    if (!currentProduct) return;
+
+
+    const selectedColor =
+        document
+            .querySelector("#colorOptions .color-option.active")
+            ?.dataset.color || "";
+
+
+    const selectedSize =
+        document
+            .querySelector("#sizeOptions .size-option.active")
+            ?.dataset.size || "";
+
+
+    const customization =
+        $("customizationText")?.value.trim() || "";
+
+
+    cart.push({
+
+        id: currentProduct.id,
+
+        name: currentProduct.name,
+
+        price: currentProduct.price,
+
+        image: currentProduct.image,
+
+        quantity: currentQuantity,
+
+        color: selectedColor,
+
+        size: selectedSize,
+
+        customization: customization
+
+    });
+
+
+    saveData(STORAGE.cart, cart);
+
+    updateCartUI();
+
+    closeModal("productModal");
+
+    showToast(
+        `${currentProduct.name} added to cart 🛒`
     );
 }
 
 
-function saveWishlist() {
-
-    localStorage.setItem(
-        "saruWishlist",
-        JSON.stringify(wishlist)
-    );
-}
+$("modalAddToCart")?.addEventListener(
+    "click",
+    addCurrentProductToCart
+);
 
 
-function saveOrders() {
+/* =========================================================
+   CART CALCULATIONS
+========================================================= */
 
-    localStorage.setItem(
-        "saruOrders",
-        JSON.stringify(orders)
+function getCartCount() {
+
+    return cart.reduce(
+        (total, item) =>
+            total + Number(item.quantity || 0),
+        0
     );
 }
 
 
 function getCartTotal() {
 
-    return cart.reduce((total, item) => {
-
-        const product =
-            getProductById(item.id);
-
-        if (!product) {
-            return total;
-        }
-
-        return total +
-            product.price *
-            item.quantity;
-
-    }, 0);
-}
-
-
-function formatPrice(price) {
-
-    return "₹" +
-        Number(price).toLocaleString("en-IN");
-}
-
-
-// ==========================================
-// ELEMENTS
-// ==========================================
-
-const productsGrid =
-    document.getElementById("productsGrid");
-
-const cartSidebar =
-    document.getElementById("cartSidebar");
-
-const cartItems =
-    document.getElementById("cartItems");
-
-const cartTotal =
-    document.getElementById("cartTotal");
-
-const cartCount =
-    document.getElementById("cartCount");
-
-const wishlistCount =
-    document.getElementById("wishlistCount");
-
-const wishlistModal =
-    document.getElementById("wishlistModal");
-
-const wishlistItems =
-    document.getElementById("wishlistItems");
-
-const overlay =
-    document.getElementById("overlay");
-
-const accountModal =
-    document.getElementById("accountModal");
-
-const ordersModal =
-    document.getElementById("ordersModal");
-
-const checkoutModal =
-    document.getElementById("checkoutModal");
-
-const loginSection =
-    document.getElementById("loginSection");
-
-const registerSection =
-    document.getElementById("registerSection");
-
-const userSection =
-    document.getElementById("userSection");
-
-
-// ==========================================
-// PRODUCTS DISPLAY
-// ==========================================
-
-function displayProducts(list = products) {
-
-    if (!productsGrid) {
-        return;
-    }
-
-
-    if (list.length === 0) {
-
-        productsGrid.innerHTML = `
-            <div class="empty-message">
-                😔 No products found.
-            </div>
-        `;
-
-        return;
-    }
-
-
-    productsGrid.innerHTML =
-        list.map(product => {
-
-            const isWishlisted =
-                wishlist.includes(
-                    String(product.id)
-                );
-
-
-            return `
-                <div class="product-card">
-
-                    <div class="product-image-wrapper">
-
-                        <img
-                            class="product-image"
-                            src="${product.image}"
-                            alt="${product.name}"
-                            onerror="this.style.display='none';"
-                        >
-
-                        <button
-                            class="wishlist-btn ${isWishlisted ? "active" : ""}"
-                            data-wishlist="${product.id}"
-                            type="button"
-                            aria-label="Wishlist"
-                        >
-                            ${isWishlisted ? "♥" : "♡"}
-                        </button>
-
-                    </div>
-
-                    <div class="product-info">
-
-                        <div class="product-category">
-                            ${product.category}
-                        </div>
-
-                        <h3 class="product-name">
-                            ${product.name}
-                        </h3>
-
-                        <div class="product-rating">
-                            ⭐⭐⭐⭐⭐
-                        </div>
-
-                        <div class="product-bottom">
-
-                            <div class="product-price">
-                                ${formatPrice(product.price)}
-                            </div>
-
-                            <button
-                                class="add-cart-btn"
-                                data-add-cart="${product.id}"
-                                type="button"
-                            >
-                                🛒 Add to Cart
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </div>
-            `;
-
-        }).join("");
-}
-
-
-// ==========================================
-// CART DISPLAY
-// ==========================================
-
-function displayCart() {
-
-    if (!cartItems) {
-        return;
-    }
-
-
-    cart = cart.filter(item =>
-        getProductById(item.id)
+    return cart.reduce(
+        (total, item) =>
+            total +
+            Number(item.price || 0) *
+            Number(item.quantity || 0),
+        0
     );
+}
 
 
-    if (cart.length === 0) {
+/* =========================================================
+   CART UI
+========================================================= */
 
-        cartItems.innerHTML = `
-            <div class="empty-message">
-                🛒 Your cart is empty.
-            </div>
-        `;
+function updateCartUI() {
 
-    } else {
+    const container = $("cartItems");
 
-        cartItems.innerHTML =
-            cart.map(item => {
+    if (!container) return;
 
-                const product =
-                    getProductById(item.id);
+    container.innerHTML = "";
 
-                if (!product) {
-                    return "";
+
+    const count = getCartCount();
+
+    const total = getCartTotal();
+
+
+    $("cartCount").textContent = count;
+
+    $("bottomCartCount").textContent = count;
+
+    $("cartSubtotal").textContent =
+        formatPrice(total);
+
+    $("cartTotal").textContent =
+        formatPrice(total);
+
+
+    $("emptyCart").style.display =
+        cart.length ? "none" : "block";
+
+
+    $("cartFooter").style.display =
+        cart.length ? "block" : "none";
+
+
+    cart.forEach((item, index) => {
+
+        const element =
+            document.createElement("div");
+
+        element.className = "cart-item";
+
+
+        element.innerHTML = `
+
+            <img
+                src="${item.image}"
+                alt="${item.name}"
+                onerror="this.src='picture/Logo.jpg'"
+            >
+
+            <div>
+
+                <h4>${item.name}</h4>
+
+                ${
+                    item.color
+                        ? `<small>Color: ${item.color}</small>`
+                        : ""
                 }
 
-
-                return `
-                    <div class="cart-item">
-
-                        <img
-                            src="${product.image}"
-                            alt="${product.name}"
-                        >
-
-                        <div>
-
-                            <h4>
-                                ${product.name}
-                            </h4>
-
-                            <p>
-                                ${formatPrice(product.price)}
-                            </p>
-
-                            <div class="cart-controls">
-
-                                <button
-                                    class="qty-btn"
-                                    data-minus="${product.id}"
-                                    type="button"
-                                >
-                                    −
-                                </button>
-
-                                <span>
-                                    ${item.quantity}
-                                </span>
-
-                                <button
-                                    class="qty-btn"
-                                    data-plus="${product.id}"
-                                    type="button"
-                                >
-                                    +
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                        <button
-                            class="remove-cart-btn"
-                            data-remove-cart="${product.id}"
-                            type="button"
-                        >
-                            Remove
-                        </button>
-
-                    </div>
-                `;
-
-            }).join("");
-    }
-
-
-    if (cartTotal) {
-
-        cartTotal.textContent =
-            getCartTotal()
-                .toLocaleString("en-IN");
-    }
-
-
-    if (cartCount) {
-
-        cartCount.textContent =
-            cart.reduce(
-                (total, item) =>
-                    total + item.quantity,
-                0
-            );
-    }
-
-
-    saveCart();
-}
-
-
-// ==========================================
-// ADD TO CART
-// ==========================================
-
-function addToCart(id) {
-
-    const product =
-        getProductById(id);
-
-    if (!product) {
-        return;
-    }
-
-
-    const existing =
-        cart.find(item =>
-            String(item.id) === String(id)
-        );
-
-
-    if (existing) {
-
-        existing.quantity += 1;
-
-    } else {
-
-        cart.push({
-            id: String(id),
-            quantity: 1
-        });
-    }
-
-
-    saveCart();
-
-    displayCart();
-
-
-    alert(
-        `${product.name} has been added to your cart! 🧶`
-    );
-}
-
-
-// ==========================================
-// CHANGE QUANTITY
-// ==========================================
-
-function changeQuantity(id, amount) {
-
-    const item =
-        cart.find(item =>
-            String(item.id) === String(id)
-        );
-
-    if (!item) {
-        return;
-    }
-
-
-    item.quantity += amount;
-
-
-    if (item.quantity <= 0) {
-
-        cart = cart.filter(item =>
-            String(item.id) !== String(id)
-        );
-    }
-
-
-    saveCart();
-
-    displayCart();
-}
-
-
-// ==========================================
-// REMOVE FROM CART
-// ==========================================
-
-function removeFromCart(id) {
-
-    cart = cart.filter(item =>
-        String(item.id) !== String(id)
-    );
-
-
-    saveCart();
-
-    displayCart();
-}
-
-
-// ==========================================
-// WISHLIST DISPLAY
-// ==========================================
-
-function displayWishlist() {
-
-    if (!wishlistItems) {
-        return;
-    }
-
-
-    const validWishlist =
-        wishlist
-            .map(id => getProductById(id))
-            .filter(Boolean);
-
-
-    wishlist =
-        validWishlist.map(product =>
-            String(product.id)
-        );
-
-
-    saveWishlist();
-
-
-    if (wishlistCount) {
-
-        wishlistCount.textContent =
-            wishlist.length;
-    }
-
-
-    if (validWishlist.length === 0) {
-
-        wishlistItems.innerHTML = `
-            <div class="empty-message">
-                ♡ Your wishlist is empty.
-            </div>
-        `;
-
-        return;
-    }
-
-
-    wishlistItems.innerHTML =
-        validWishlist.map(product => {
-
-            return `
-                <div class="wishlist-item">
-
-                    <img
-                        src="${product.image}"
-                        alt="${product.name}"
-                    >
-
-                    <div>
-
-                        <h4>
-                            ${product.name}
-                        </h4>
-
-                        <p>
-                            ${formatPrice(product.price)}
-                        </p>
-
-                    </div>
+                ${
+                    item.size
+                        ? `<small>Size: ${item.size}</small>`
+                        : ""
+                }
+
+                <p>
+                    ${formatPrice(item.price)}
+                </p>
+
+                <div class="quantity-box">
 
                     <button
-                        class="wishlist-remove"
-                        data-remove-wishlist="${product.id}"
-                        type="button"
+                        data-minus="${index}"
                     >
-                        ♥
+                        −
+                    </button>
+
+                    <span>
+                        ${item.quantity}
+                    </span>
+
+                    <button
+                        data-plus="${index}"
+                    >
+                        +
                     </button>
 
                 </div>
-            `;
 
-        }).join("");
-}
+            </div>
 
 
-// ==========================================
-// TOGGLE WISHLIST
-// ==========================================
+            <button
+                class="cart-remove"
+                data-remove="${index}"
+                aria-label="Remove"
+            >
+                <i class="fa-solid fa-trash"></i>
+            </button>
 
-function toggleWishlist(id) {
-
-    id = String(id);
-
-
-    if (!getProductById(id)) {
-        return;
-    }
+        `;
 
 
-    if (wishlist.includes(id)) {
-
-        wishlist =
-            wishlist.filter(item =>
-                item !== id
-            );
-
-    } else {
-
-        wishlist.push(id);
-    }
-
-
-    saveWishlist();
-
-    displayWishlist();
-
-    displayProducts();
-}
-
-
-// ==========================================
-// SEARCH
-// ==========================================
-
-const searchInput =
-    document.getElementById("searchInput");
-
-
-if (searchInput) {
-
-    searchInput.addEventListener(
-        "input",
-        function () {
-
-            const search =
-                this.value
-                    .trim()
-                    .toLowerCase();
-
-
-            const filtered =
-                products.filter(product =>
-
-                    product.name
-                        .toLowerCase()
-                        .includes(search)
-
-                    ||
-
-                    product.category
-                        .toLowerCase()
-                        .includes(search)
-                );
-
-
-            displayProducts(filtered);
-        }
-    );
-}
-
-
-// ==========================================
-// CATEGORY FILTER
-// ==========================================
-
-document
-    .querySelectorAll(".category-btn")
-    .forEach(button => {
-
-        button.addEventListener(
-            "click",
-            function () {
-
-                document
-                    .querySelectorAll(
-                        ".category-btn"
-                    )
-                    .forEach(btn =>
-                        btn.classList.remove(
-                            "active"
-                        )
-                    );
-
-
-                this.classList.add("active");
-
-
-                const category =
-                    this.dataset.category;
-
-
-                if (category === "all") {
-
-                    displayProducts(products);
-
-                } else {
-
-                    displayProducts(
-                        products.filter(product =>
-                            product.category ===
-                            category
-                        )
-                    );
-                }
-
-            }
-        );
-
+        container.appendChild(element);
     });
 
 
-// ==========================================
-// PRODUCT EVENTS
-// ==========================================
+    container
+        .querySelectorAll("[data-minus]")
+        .forEach(button => {
 
-if (productsGrid) {
+            button.addEventListener("click", () => {
 
-    productsGrid.addEventListener(
-        "click",
-        function (event) {
-
-            const cartButton =
-                event.target.closest(
-                    "[data-add-cart]"
-                );
-
-
-            const wishlistButton =
-                event.target.closest(
-                    "[data-wishlist]"
-                );
-
-
-            if (cartButton) {
-
-                addToCart(
-                    cartButton.dataset.addCart
-                );
-
-                return;
-            }
-
-
-            if (wishlistButton) {
-
-                toggleWishlist(
-                    wishlistButton.dataset.wishlist
-                );
-            }
-
-        }
-    );
-}
-
-
-// ==========================================
-// CART EVENTS
-// ==========================================
-
-if (cartItems) {
-
-    cartItems.addEventListener(
-        "click",
-        function (event) {
-
-            const plus =
-                event.target.closest(
-                    "[data-plus]"
-                );
-
-            const minus =
-                event.target.closest(
-                    "[data-minus]"
-                );
-
-            const remove =
-                event.target.closest(
-                    "[data-remove-cart]"
-                );
-
-
-            if (plus) {
-
-                changeQuantity(
-                    plus.dataset.plus,
-                    1
-                );
-
-                return;
-            }
-
-
-            if (minus) {
-
-                changeQuantity(
-                    minus.dataset.minus,
+                changeCartQuantity(
+                    Number(button.dataset.minus),
                     -1
                 );
 
-                return;
-            }
+            });
+
+        });
 
 
-            if (remove) {
+    container
+        .querySelectorAll("[data-plus]")
+        .forEach(button => {
+
+            button.addEventListener("click", () => {
+
+                changeCartQuantity(
+                    Number(button.dataset.plus),
+                    1
+                );
+
+            });
+
+        });
+
+
+    container
+        .querySelectorAll("[data-remove]")
+        .forEach(button => {
+
+            button.addEventListener("click", () => {
 
                 removeFromCart(
-                    remove.dataset.removeCart
+                    Number(button.dataset.remove)
                 );
-            }
 
-        }
-    );
+            });
+
+        });
+
+
+    updateDeliveryProgress();
+
 }
 
 
-// ==========================================
-// WISHLIST EVENTS
-// ==========================================
+function changeCartQuantity(index, change) {
 
-if (wishlistItems) {
+    if (!cart[index]) return;
 
-    wishlistItems.addEventListener(
-        "click",
-        function (event) {
-
-            const remove =
-                event.target.closest(
-                    "[data-remove-wishlist]"
-                );
+    cart[index].quantity += change;
 
 
-            if (remove) {
+    if (cart[index].quantity <= 0) {
 
-                toggleWishlist(
-                    remove.dataset.removeWishlist
-                );
-            }
+        cart.splice(index, 1);
+    }
 
-        }
-    );
+
+    saveData(STORAGE.cart, cart);
+
+    updateCartUI();
 }
 
 
-// ==========================================
-// MODAL FUNCTIONS
-// ==========================================
+function removeFromCart(index) {
 
-function openModal(modal) {
+    if (!cart[index]) return;
 
-    if (!modal) {
-        return;
-    }
+    const name = cart[index].name;
 
+    cart.splice(index, 1);
 
-    modal.classList.add("active");
+    saveData(STORAGE.cart, cart);
 
-    modal.setAttribute(
-        "aria-hidden",
-        "false"
-    );
+    updateCartUI();
 
-
-    if (overlay) {
-
-        overlay.classList.add("active");
-    }
+    showToast(`${name} removed from cart.`);
 }
 
 
-function closeModal(modal) {
+/* =========================================================
+   DELIVERY
+========================================================= */
 
-    if (!modal) {
-        return;
-    }
+function updateDeliveryProgress() {
 
+    const total = getCartTotal();
 
-    modal.classList.remove("active");
-
-    modal.setAttribute(
-        "aria-hidden",
-        "true"
-    );
-
-
-    const anyOpen =
-        document.querySelector(
-            ".modal.active, .cart-sidebar.active"
+    const progress =
+        Math.min(
+            (total / FREE_DELIVERY_LIMIT) * 100,
+            100
         );
 
 
-    if (!anyOpen && overlay) {
+    $("deliveryProgress").style.width =
+        `${progress}%`;
 
-        overlay.classList.remove("active");
+
+    if (total >= FREE_DELIVERY_LIMIT) {
+
+        $("deliveryMessage").textContent =
+            "🎉 You qualify for FREE delivery!";
+
+        $("cartDelivery").textContent =
+            "FREE";
+
+    } else {
+
+        const remaining =
+            FREE_DELIVERY_LIMIT - total;
+
+        $("deliveryMessage").textContent =
+            `Add ${formatPrice(remaining)} more for free delivery.`;
+
+        $("cartDelivery").textContent =
+            "FREE";
     }
+
 }
 
 
-// ==========================================
-// CART OPEN / CLOSE
-// ==========================================
+/* =========================================================
+   CART OPEN/CLOSE
+========================================================= */
 
 function openCart() {
 
-    if (!cartSidebar) {
-        return;
-    }
+    $("cartSidebar").classList.add("active");
 
+    $("cartOverlay").classList.add("active");
 
-    displayCart();
-
-    cartSidebar.classList.add("active");
-
-
-    if (overlay) {
-
-        overlay.classList.add("active");
-    }
+    document.body.classList.add("no-scroll");
 }
 
 
 function closeCart() {
 
-    if (!cartSidebar) {
-        return;
-    }
+    $("cartSidebar")?.classList.remove("active");
 
+    $("cartOverlay")?.classList.remove("active");
 
-    cartSidebar.classList.remove("active");
-
-
-    if (overlay) {
-
-        overlay.classList.remove("active");
+    if (!document.querySelector(".modal.active")) {
+        document.body.classList.remove("no-scroll");
     }
 }
 
 
-document
-    .getElementById("cartBtn")
-    ?.addEventListener(
-        "click",
-        openCart
-    );
-
-
-document
-    .getElementById("closeCart")
-    ?.addEventListener(
-        "click",
-        closeCart
-    );
-
-
-// ==========================================
-// OVERLAY
-// ==========================================
-
-overlay?.addEventListener(
+$("cartBtn")?.addEventListener(
     "click",
-    function () {
+    openCart
+);
+
+$("closeCart")?.addEventListener(
+    "click",
+    closeCart
+);
+
+$("cartOverlay")?.addEventListener(
+    "click",
+    closeCart
+);
+
+$("continueShopping")?.addEventListener(
+    "click",
+    closeCart
+);
+
+
+/* =========================================================
+   CHECKOUT
+========================================================= */
+
+function isLoggedIn() {
+
+    return (
+        localStorage.getItem(
+            STORAGE.loggedIn
+        ) === "true"
+    );
+}
+
+
+function openCheckout() {
+
+    if (!cart.length) {
+
+        showToast("Your cart is empty! 🛒");
+
+        return;
+    }
+
+
+    if (!isLoggedIn()) {
+
+        localStorage.setItem(
+            STORAGE.pendingAction,
+            "checkout"
+        );
 
         closeCart();
 
-        closeModal(wishlistModal);
+        openModal("loginModal");
 
-        closeModal(accountModal);
+        showToast(
+            "Please login to continue."
+        );
 
-        closeModal(ordersModal);
-
-        closeModal(checkoutModal);
+        return;
     }
+
+
+    renderCheckoutSummary();
+
+    closeCart();
+
+    openModal("checkoutModal");
+}
+
+
+$("checkoutBtn")?.addEventListener(
+    "click",
+    openCheckout
 );
 
 
-// ==========================================
-// WISHLIST OPEN
-// ==========================================
+/* =========================================================
+   CHECKOUT SUMMARY
+========================================================= */
 
-document
-    .getElementById("wishlistBtn")
-    ?.addEventListener(
-        "click",
-        function () {
+function renderCheckoutSummary() {
 
-            displayWishlist();
+    const container = $("checkoutItems");
 
-            openModal(wishlistModal);
-        }
-    );
+    if (!container) return;
 
+    container.innerHTML = "";
 
-document
-    .getElementById("closeWishlist")
-    ?.addEventListener(
-        "click",
-        function () {
 
-            closeModal(wishlistModal);
-        }
-    );
+    cart.forEach(item => {
 
+        const div =
+            document.createElement("div");
 
-// ==========================================
-// ACCOUNT
-// ==========================================
+        div.className = "checkout-item";
 
-function openAccount() {
 
-    openModal(accountModal);
-}
+        div.innerHTML = `
 
+            <span>
+                ${item.name}
+                × ${item.quantity}
+            </span>
 
-document
-    .getElementById("menuLoginBtn")
-    ?.addEventListener(
-        "click",
-        function (event) {
+            <strong>
+                ${formatPrice(
+                    item.price * item.quantity
+                )}
+            </strong>
 
-            event.preventDefault();
+        `;
 
-            openAccount();
-        }
-    );
 
-
-document
-    .getElementById("closeAccount")
-    ?.addEventListener(
-        "click",
-        function () {
-
-            closeModal(accountModal);
-        }
-    );
-
-
-// ==========================================
-// LOGIN / REGISTER SWITCH
-// ==========================================
-
-document
-    .getElementById("showRegister")
-    ?.addEventListener(
-        "click",
-        function () {
-
-            if (loginSection) {
-
-                loginSection.style.display =
-                    "none";
-            }
-
-
-            if (registerSection) {
-
-                registerSection.style.display =
-                    "block";
-            }
-
-        }
-    );
-
-
-document
-    .getElementById("showLogin")
-    ?.addEventListener(
-        "click",
-        function () {
-
-            if (registerSection) {
-
-                registerSection.style.display =
-                    "none";
-            }
-
-
-            if (loginSection) {
-
-                loginSection.style.display =
-                    "block";
-            }
-
-        }
-    );
-
-
-// ==========================================
-// REGISTER
-// ==========================================
-
-document
-    .getElementById("registerForm")
-    ?.addEventListener(
-        "submit",
-        async function (event) {
-
-            event.preventDefault();
-
-
-            const name =
-                document
-                    .getElementById(
-                        "registerName"
-                    )
-                    .value
-                    .trim();
-
-
-            const email =
-                document
-                    .getElementById(
-                        "registerEmail"
-                    )
-                    .value
-                    .trim();
-
-
-            const password =
-                document
-                    .getElementById(
-                        "registerPassword"
-                    )
-                    .value;
-
-
-            const confirmPassword =
-                document
-                    .getElementById(
-                        "confirmPassword"
-                    )
-                    .value;
-
-
-            if (!name) {
-
-                alert(
-                    "Please enter your name."
-                );
-
-                return;
-            }
-
-
-            if (!email) {
-
-                alert(
-                    "Please enter your email."
-                );
-
-                return;
-            }
-
-
-            if (!password) {
-
-                alert(
-                    "Please enter a password."
-                );
-
-                return;
-            }
-
-
-            if (password.length < 6) {
-
-                alert(
-                    "Password must be at least 6 characters."
-                );
-
-                return;
-            }
-
-
-            if (password !== confirmPassword) {
-
-                alert(
-                    "Passwords do not match."
-                );
-
-                return;
-            }
-
-
-            try {
-
-                const result =
-                    await createUserWithEmailAndPassword(
-                        auth,
-                        email,
-                        password
-                    );
-
-
-                await setDoc(
-                    doc(
-                        db,
-                        "users",
-                        result.user.uid
-                    ),
-                    {
-                        name: name,
-                        email: email,
-                        createdAt:
-                            new Date().toISOString()
-                    }
-                );
-
-
-                alert(
-                    "Account created successfully! ❤️"
-                );
-
-
-                document
-                    .getElementById(
-                        "registerForm"
-                    )
-                    ?.reset();
-
-
-            } catch (error) {
-
-                console.error(
-                    "Registration error:",
-                    error
-                );
-
-
-                alert(
-                    getFirebaseError(error)
-                );
-            }
-
-        }
-    );
-
-
-// ==========================================
-// LOGIN
-// ==========================================
-
-document
-    .getElementById("loginForm")
-    ?.addEventListener(
-        "submit",
-        async function (event) {
-
-            event.preventDefault();
-
-
-            const email =
-                document
-                    .getElementById(
-                        "loginEmail"
-                    )
-                    .value
-                    .trim();
-
-
-            const password =
-                document
-                    .getElementById(
-                        "loginPassword"
-                    )
-                    .value;
-
-
-            if (!email) {
-
-                alert(
-                    "Please enter your email."
-                );
-
-                return;
-            }
-
-
-            if (!password) {
-
-                alert(
-                    "Please enter your password."
-                );
-
-                return;
-            }
-
-
-            try {
-
-                await signInWithEmailAndPassword(
-                    auth,
-                    email,
-                    password
-                );
-
-
-                document
-                    .getElementById(
-                        "loginForm"
-                    )
-                    ?.reset();
-
-
-            } catch (error) {
-
-                console.error(
-                    "Login error:",
-                    error
-                );
-
-
-                alert(
-                    getFirebaseError(error)
-                );
-            }
-
-        }
-    );
-
-
-// ==========================================
-// FIREBASE ERROR MESSAGE
-// ==========================================
-
-function getFirebaseError(error) {
-
-    switch (error.code) {
-
-        case "auth/email-already-in-use":
-            return "This email is already registered.";
-
-        case "auth/invalid-email":
-            return "Please enter a valid email address.";
-
-        case "auth/weak-password":
-            return "Password must be at least 6 characters.";
-
-        case "auth/invalid-credential":
-            return "Invalid email or password.";
-
-        case "auth/user-not-found":
-            return "No account found with this email.";
-
-        case "auth/wrong-password":
-            return "Incorrect password.";
-
-        case "auth/too-many-requests":
-            return "Too many attempts. Please try again later.";
-
-        case "auth/network-request-failed":
-            return "Network error. Please check your internet connection.";
-
-        default:
-            return "Something went wrong. Please try again.";
-    }
-}
-
-
-// ==========================================
-// PASSWORD VISIBILITY
-// ==========================================
-
-document
-    .querySelectorAll(".password-toggle")
-    .forEach(button => {
-
-        button.addEventListener(
-            "click",
-            function () {
-
-                const targetId =
-                    this.dataset.target;
-
-
-                const input =
-                    document.getElementById(
-                        targetId
-                    );
-
-
-                if (!input) {
-                    return;
-                }
-
-
-                if (input.type === "password") {
-
-                    input.type = "text";
-
-                    this.textContent = "🙈";
-
-                    this.setAttribute(
-                        "aria-label",
-                        "Hide password"
-                    );
-
-                } else {
-
-                    input.type = "password";
-
-                    this.textContent = "👁️";
-
-                    this.setAttribute(
-                        "aria-label",
-                        "Show password"
-                    );
-                }
-
-            }
-        );
-
+        container.appendChild(div);
     });
 
 
-// ==========================================
-// LOGIN GATE
-// ==========================================
-
-let currentUser = null;
+    $("checkoutTotal").textContent =
+        formatPrice(getCartTotal());
 
 
-document.body.classList.add(
-    "auth-locked"
-);
-
-
-// Create login gate CSS
-const authGateStyle =
-    document.createElement("style");
-
-
-authGateStyle.textContent = `
-    body.auth-locked {
-        overflow: hidden;
-    }
-
-    body.auth-locked > *:not(#accountModal) {
-        display: none !important;
-    }
-
-    body.auth-locked #accountModal {
-        display: flex !important;
-        position: fixed;
-        inset: 0;
-        z-index: 99999;
-        background: rgba(0, 0, 0, 0.65);
-        align-items: center;
-        justify-content: center;
-    }
-
-    body.auth-locked #closeAccount {
-        display: none !important;
-    }
-
-    body.auth-locked #overlay {
-        display: none !important;
-    }
-`;
-
-
-document.head.appendChild(
-    authGateStyle
-);
-
-
-// ==========================================
-// AUTH STATE
-// ==========================================
-
-onAuthStateChanged(
-    auth,
-    async function (user) {
-
-        currentUser = user;
-
-
-        if (user) {
-
-            document.body.classList.remove(
-                "auth-locked"
-            );
-
-
-            await showLoggedInUser(
-                user
-            );
-
-
-            closeModal(
-                accountModal
-            );
-
-        } else {
-
-            document.body.classList.add(
-                "auth-locked"
-            );
-
-
-            showLoggedOutUser();
-
-
-            if (loginSection) {
-
-                loginSection.style.display =
-                    "block";
-            }
-
-
-            if (registerSection) {
-
-                registerSection.style.display =
-                    "none";
-            }
-
-
-            if (userSection) {
-
-                userSection.style.display =
-                    "none";
-            }
-
-
-            if (accountModal) {
-
-                accountModal.classList.add(
-                    "active"
-                );
-
-                accountModal.setAttribute(
-                    "aria-hidden",
-                    "false"
-                );
-            }
-
-        }
-
-    }
-);
-
-
-// ==========================================
-// LOGGED IN USER
-// ==========================================
-
-async function showLoggedInUser(user) {
-
-    if (loginSection) {
-
-        loginSection.style.display =
-            "none";
-    }
-
-
-    if (registerSection) {
-
-        registerSection.style.display =
-            "none";
-    }
-
-
-    if (userSection) {
-
-        userSection.style.display =
-            "block";
-    }
-
-
-    const welcomeUser =
-        document.getElementById(
-            "welcomeUser"
+    const user =
+        JSON.parse(
+            localStorage.getItem(STORAGE.user) || "null"
         );
 
 
-    let name = "";
+    if (user) {
 
-
-    try {
-
-        const userDoc =
-            await getDoc(
-                doc(
-                    db,
-                    "users",
-                    user.uid
-                )
-            );
-
-
-        if (userDoc.exists()) {
-
-            name =
-                userDoc.data().name || "";
+        if (user.name) {
+            $("customerName").value = user.name;
         }
 
-    } catch (error) {
+        if (user.phone) {
+            $("customerPhone").value = user.phone;
+        }
 
-        console.error(
-            "User data load error:",
-            error
-        );
     }
 
-
-    if (!name) {
-
-        name =
-            user.email
-                ? user.email.split("@")[0]
-                : "User";
-    }
-
-
-    if (welcomeUser) {
-
-        welcomeUser.textContent =
-            `Welcome, ${name}! 💜`;
-    }
 }
 
 
-// ==========================================
-// LOGGED OUT USER
-// ==========================================
+/* =========================================================
+   WHATSAPP ORDER
+========================================================= */
 
-function showLoggedOutUser() {
+function placeOrderToWhatsApp(event) {
 
-    if (loginSection) {
-
-        loginSection.style.display =
-            "block";
-    }
+    event.preventDefault();
 
 
-    if (registerSection) {
+    if (!cart.length) {
 
-        registerSection.style.display =
-            "none";
-    }
-
-
-    if (userSection) {
-
-        userSection.style.display =
-            "none";
-    }
-}
-
-
-// ==========================================
-// LOGOUT
-// ==========================================
-
-document
-    .getElementById("logoutBtn")
-    ?.addEventListener(
-        "click",
-        async function () {
-
-            try {
-
-                await signOut(auth);
-
-                alert(
-                    "Logged out successfully! ❤️"
-                );
-
-            } catch (error) {
-
-                console.error(
-                    "Logout error:",
-                    error
-                );
-
-
-                alert(
-                    "Unable to log out. Please try again."
-                );
-            }
-
-        }
-    );
-
-
-// ==========================================
-// MY ORDERS
-// ==========================================
-
-document
-    .getElementById("myOrdersBtn")
-    ?.addEventListener(
-        "click",
-        function () {
-
-            if (!currentUser) {
-
-                alert(
-                    "Please log in first."
-                );
-
-                return;
-            }
-
-
-            displayOrders();
-
-            closeModal(accountModal);
-
-            openModal(ordersModal);
-        }
-    );
-
-
-document
-    .getElementById("closeOrders")
-    ?.addEventListener(
-        "click",
-        function () {
-
-            closeModal(ordersModal);
-        }
-    );
-
-
-// ==========================================
-// DISPLAY ORDERS
-// ==========================================
-
-function displayOrders() {
-
-    const ordersList =
-        document.getElementById(
-            "ordersList"
-        );
-
-
-    if (!ordersList) {
-        return;
-    }
-
-
-    let userOrders = [];
-
-
-    if (currentUser) {
-
-        userOrders =
-            orders.filter(order =>
-                order.userId ===
-                currentUser.uid
-            );
-    }
-
-
-    if (userOrders.length === 0) {
-
-        ordersList.innerHTML = `
-            <div class="empty-message">
-                📦 You have no orders yet.
-            </div>
-        `;
+        showToast("Your cart is empty! 🛒");
 
         return;
     }
 
 
-    ordersList.innerHTML =
-        userOrders
-            .slice()
-            .reverse()
-            .map(order => {
+    const customerName =
+        $("customerName").value.trim();
 
-                const orderDate =
-                    order.date
-                        ? new Date(
-                            order.date
-                        ).toLocaleString(
-                            "en-IN"
-                        )
-                        : "";
+    const customerPhone =
+        $("customerPhone").value.trim();
 
+    const customerAddress =
+        $("customerAddress").value.trim();
 
-                return `
-                    <div class="order-card">
 
-                        <h3>
-                            Order #${order.id}
-                        </h3>
+    const payment =
+        document.querySelector(
+            'input[name="paymentMethod"]:checked'
+        )?.value || "Cash on Delivery";
 
-                        <p>
-                            <strong>Name:</strong>
-                            ${order.customerName}
-                        </p>
 
-                        <p>
-                            <strong>Phone:</strong>
-                            ${order.customerPhone}
-                        </p>
+    if (
+        !customerName ||
+        !customerPhone ||
+        !customerAddress
+    ) {
 
-                        <p>
-                            <strong>Date:</strong>
-                            ${orderDate}
-                        </p>
+        showToast(
+            "Please fill all required details."
+        );
 
-                        <div class="order-products">
+        return;
+    }
 
-                            ${order.items.map(item => {
 
-                                const product =
-                                    getProductById(
-                                        item.id
-                                    );
+    const total = getCartTotal();
 
-                                if (!product) {
-                                    return "";
-                                }
-
-
-                                return `
-                                    <div class="order-product-line">
-
-                                        <span>
-                                            ${product.name}
-                                            × ${item.quantity}
-                                        </span>
-
-                                        <strong>
-                                            ${formatPrice(
-                                                product.price *
-                                                item.quantity
-                                            )}
-                                        </strong>
-
-                                    </div>
-                                `;
-
-                            }).join("")}
-
-                        </div>
-
-
-                        <div class="summary-total">
-
-                            <span>
-                                Total
-                            </span>
-
-                            <strong>
-                                ${formatPrice(
-                                    order.total
-                                )}
-                            </strong>
-
-                        </div>
-
-
-                        <span class="order-status">
-                            ${order.status || "Order Placed"}
-                        </span>
-
-                    </div>
-                `;
-
-            })
-            .join("");
-}
-
-
-// ==========================================
-// CHECKOUT
-// ==========================================
-
-document
-    .getElementById("checkoutBtn")
-    ?.addEventListener(
-        "click",
-        function () {
-
-            if (!currentUser) {
-
-                alert(
-                    "Please log in before placing an order."
-                );
-
-                closeCart();
-
-                openAccount();
-
-                return;
-            }
-
-
-            if (cart.length === 0) {
-
-                alert(
-                    "Your cart is empty! 🛒"
-                );
-
-                return;
-            }
-
-
-            closeCart();
-
-            openModal(
-                checkoutModal
-            );
-
-
-            const addressStep =
-                document.getElementById(
-                    "addressStep"
-                );
-
-            const paymentStep =
-                document.getElementById(
-                    "paymentStep"
-                );
-
-
-            if (addressStep) {
-
-                addressStep.style.display =
-                    "block";
-            }
-
-
-            if (paymentStep) {
-
-                paymentStep.style.display =
-                    "none";
-            }
-
-        }
-    );
-
-
-// ==========================================
-// CLOSE CHECKOUT
-// ==========================================
-
-document
-    .getElementById("closeCheckout")
-    ?.addEventListener(
-        "click",
-        function () {
-
-            closeModal(
-                checkoutModal
-            );
-        }
-    );
-
-
-// ==========================================
-// ADDRESS TO PAYMENT
-// ==========================================
-
-document
-    .getElementById("continueToPayment")
-    ?.addEventListener(
-        "click",
-        function () {
-
-            const name =
-                document
-                    .getElementById(
-                        "customerName"
-                    )
-                    .value
-                    .trim();
-
-
-            const phone =
-                document
-                    .getElementById(
-                        "customerPhone"
-                    )
-                    .value
-                    .trim();
-
-
-            const address =
-                document
-                    .getElementById(
-                        "customerAddress"
-                    )
-                    .value
-                    .trim();
-
-
-            const confirmAddress =
-                document
-                    .getElementById(
-                        "confirmAddress"
-                    )
-                    .value
-                    .trim();
-
-
-            if (
-                !name ||
-                !phone ||
-                !address ||
-                !confirmAddress
-            ) {
-
-                alert(
-                    "Please fill in all the required information."
-                );
-
-                return;
-            }
-
-
-            if (address !== confirmAddress) {
-
-                alert(
-                    "The addresses do not match."
-                );
-
-                return;
-            }
-
-
-            const summaryName =
-                document.getElementById(
-                    "summaryName"
-                );
-
-
-            const summaryPhone =
-                document.getElementById(
-                    "summaryPhone"
-                );
-
-
-            const summaryAddress =
-                document.getElementById(
-                    "summaryAddress"
-                );
-
-
-            const summaryTotal =
-                document.getElementById(
-                    "summaryTotal"
-                );
-
-
-            if (summaryName) {
-
-                summaryName.textContent =
-                    name;
-            }
-
-
-            if (summaryPhone) {
-
-                summaryPhone.textContent =
-                    phone;
-            }
-
-
-            if (summaryAddress) {
-
-                summaryAddress.textContent =
-                    address;
-            }
-
-
-            if (summaryTotal) {
-
-                summaryTotal.textContent =
-                    getCartTotal()
-                        .toLocaleString(
-                            "en-IN"
-                        );
-            }
-
-
-            const addressStep =
-                document.getElementById(
-                    "addressStep"
-                );
-
-
-            const paymentStep =
-                document.getElementById(
-                    "paymentStep"
-                );
-
-
-            if (addressStep) {
-
-                addressStep.style.display =
-                    "none";
-            }
-
-
-            if (paymentStep) {
-
-                paymentStep.style.display =
-                    "block";
-            }
-
-        }
-    );
-
-
-// ==========================================
-// BACK TO ADDRESS
-// ==========================================
-
-document
-    .getElementById("backAddress")
-    ?.addEventListener(
-        "click",
-        function () {
-
-            const paymentStep =
-                document.getElementById(
-                    "paymentStep"
-                );
-
-
-            const addressStep =
-                document.getElementById(
-                    "addressStep"
-                );
-
-
-            if (paymentStep) {
-
-                paymentStep.style.display =
-                    "none";
-            }
-
-
-            if (addressStep) {
-
-                addressStep.style.display =
-                    "block";
-            }
-
-        }
-    );
-
-
-// ==========================================
-// PLACE ORDER
-// ==========================================
-
-document
-    .getElementById("placeOrder")
-    ?.addEventListener(
-        "click",
-        function () {
-
-            if (!currentUser) {
-
-                alert(
-                    "Please log in first."
-                );
-
-                return;
-            }
-
-
-            if (cart.length === 0) {
-
-                alert(
-                    "Your cart is empty! 🛒"
-                );
-
-                return;
-            }
-
-
-            const customerName =
-                document
-                    .getElementById(
-                        "customerName"
-                    )
-                    .value
-                    .trim();
-
-
-            const customerPhone =
-                document
-                    .getElementById(
-                        "customerPhone"
-                    )
-                    .value
-                    .trim();
-
-
-            const customerAddress =
-                document
-                    .getElementById(
-                        "customerAddress"
-                    )
-                    .value
-                    .trim();
-
-
-            if (
-                !customerName ||
-                !customerPhone ||
-                !customerAddress
-            ) {
-
-                alert(
-                    "Please complete your delivery information."
-                );
-
-                return;
-            }
-
-
-            const paymentMethod =
-                document.querySelector(
-                    'input[name="paymentMethod"]:checked'
-                )?.value || "cod";
-
-
-            const total =
-                getCartTotal();
-
-
-            const order = {
-
-                id:
-                    "SCW-" +
-                    Date.now(),
-
-                userId:
-                    currentUser.uid,
-
-                customerName:
-                    customerName,
-
-                customerPhone:
-                    customerPhone,
-
-                customerAddress:
-                    customerAddress,
-
-                paymentMethod:
-                    paymentMethod,
-
-                items:
-                    cart.map(item => ({
-
-                        id:
-                            String(item.id),
-
-                        quantity:
-                            item.quantity
-
-                    })),
-
-                total:
-                    total,
-
-                status:
-                    "Order Placed",
-
-                date:
-                    new Date().toISOString()
-            };
-
-
-            orders.push(order);
-
-            saveOrders();
-
-
-            sendWhatsAppOrder(
-                order
-            );
-
-        }
-    );
-
-
-// ==========================================
-// WHATSAPP ORDER
-// ==========================================
-
-function sendWhatsAppOrder(order) {
 
     let message =
-        `🧶 *SARU_CRAFT_WORLD - NEW ORDER* ❤️\n\n`;
-
-
-    message +=
-        `🆔 *Order ID:* ${order.id}\n`;
-
+        `🧶 *SARU_CRAFTS_WORLD - NEW ORDER* ❤️\n\n`;
 
     message +=
-        `👤 *Customer:* ${order.customerName}\n`;
-
-
-    message +=
-        `📱 *Phone:* ${order.customerPhone}\n`;
-
+        `👤 *Customer:* ${customerName}\n`;
 
     message +=
-        `📍 *Address:* ${order.customerAddress}\n\n`;
+        `📱 *Phone:* ${customerPhone}\n`;
 
+    message +=
+        `📍 *Address:* ${customerAddress}\n`;
+
+    message +=
+        `💳 *Payment:* ${payment}\n\n`;
+
+    message +=
+        `━━━━━━━━━━━━━━\n`;
 
     message +=
         `🛍️ *ORDER DETAILS*\n`;
 
-
     message +=
         `━━━━━━━━━━━━━━\n`;
 
 
-    order.items.forEach(item => {
+    cart.forEach((item, index) => {
 
-        const product =
-            getProductById(item.id);
+        message +=
+            `\n${index + 1}. *${item.name}*\n`;
 
+        message +=
+            `Quantity: ${item.quantity}\n`;
 
-        if (!product) {
-            return;
+        message +=
+            `Price: ${formatPrice(item.price)}\n`;
+
+        if (item.color) {
+            message +=
+                `Color: ${item.color}\n`;
         }
 
+        if (item.size) {
+            message +=
+                `Size: ${item.size}\n`;
+        }
 
-        const itemTotal =
-            product.price *
-            item.quantity;
-
-
-        message +=
-            `• ${product.name}\n`;
-
-
-        message +=
-            `  Qty: ${item.quantity}\n`;
-
+        if (item.customization) {
+            message +=
+                `Customization: ${item.customization}\n`;
+        }
 
         message +=
-            `  Price: ${formatPrice(
-                itemTotal
-            )}\n\n`;
-
+            `Subtotal: ${formatPrice(
+                item.price * item.quantity
+            )}\n`;
     });
 
 
     message +=
-        `━━━━━━━━━━━━━━\n`;
-
-
-    message +=
-        `💰 *TOTAL: ${formatPrice(
-            order.total
-        )}*\n`;
-
+        `\n━━━━━━━━━━━━━━\n`;
 
     message +=
-        `💳 *Payment:* ${
-            order.paymentMethod === "upi"
-                ? "UPI"
-                : "Cash on Delivery"
-        }\n\n`;
-
+        `💰 *TOTAL: ${formatPrice(total)}*\n`;
 
     message +=
-        `Thank you for shopping with Saru_Craft_World! ❤️`;
+        `━━━━━━━━━━━━━━\n\n`;
 
-
-    const whatsappNumber =
-        "917025337305";
+    message +=
+        `Thank you for choosing Saru_Crafts_World! 🧶❤️`;
 
 
     const whatsappURL =
         "https://wa.me/" +
-        whatsappNumber +
+        WHATSAPP_NUMBER +
         "?text=" +
-        encodeURIComponent(
-            message
+        encodeURIComponent(message);
+
+
+    /*
+       WhatsApp തുറക്കാൻ ശ്രമിക്കുന്നു.
+       Popup blocked ആണെങ്കിൽ current window ഉപയോഗിക്കും.
+    */
+
+    const whatsappWindow =
+        window.open(
+            whatsappURL,
+            "_blank"
         );
 
 
-    window.open(
-        whatsappURL,
-        "_blank"
+    if (!whatsappWindow) {
+        window.location.href =
+            whatsappURL;
+    }
+
+
+    /* Save local order */
+
+    const orders =
+        JSON.parse(
+            localStorage.getItem(
+                STORAGE.orders
+            ) || "[]"
+        );
+
+
+    orders.push({
+
+        id:
+            "ORD-" +
+            Date.now(),
+
+        date:
+            new Date().toISOString(),
+
+        customerName,
+        customerPhone,
+        customerAddress,
+        payment,
+
+        items: [...cart],
+
+        total
+
+    });
+
+
+    saveData(
+        STORAGE.orders,
+        orders
     );
 
+
+    /* Clear cart */
 
     cart = [];
 
-
-    saveCart();
-
-    displayCart();
-
-
-    closeModal(
-        checkoutModal
+    saveData(
+        STORAGE.cart,
+        cart
     );
 
+    updateCartUI();
 
-    alert(
-        "Order placed successfully! ❤️ WhatsApp will open."
-    );
+    $("checkoutForm").reset();
+
+    closeModal("checkoutModal");
+
+
+    setTimeout(() => {
+
+        openModal("successModal");
+
+    }, 600);
+
 }
 
 
-// ==========================================
-// DARK MODE
-// ==========================================
-
-const darkModeBtn =
-    document.getElementById(
-        "darkModeBtn"
-    );
+$("checkoutForm")?.addEventListener(
+    "submit",
+    placeOrderToWhatsApp
+);
 
 
-const savedDarkMode =
-    localStorage.getItem(
-        "saruDarkMode"
-    );
+/* =========================================================
+   WISHLIST
+========================================================= */
+
+function toggleWishlist(id) {
+
+    const product =
+        products.find(item => item.id === id);
+
+    if (!product) return;
 
 
-if (savedDarkMode === "true") {
-
-    document.body.classList.add(
-        "dark"
-    );
+    const index =
+        wishlist.indexOf(id);
 
 
-    if (darkModeBtn) {
+    if (index === -1) {
 
-        darkModeBtn.textContent =
-            "☀️";
+        wishlist.push(id);
+
+        showToast(
+            `${product.name} added to wishlist ❤️`
+        );
+
+    } else {
+
+        wishlist.splice(index, 1);
+
+        showToast(
+            `${product.name} removed from wishlist.`
+        );
     }
+
+
+    saveData(
+        STORAGE.wishlist,
+        wishlist
+    );
+
+
+    updateWishlistCount();
+
+    renderProducts();
 }
 
 
-darkModeBtn?.addEventListener(
-    "click",
-    function () {
+function updateWishlistCount() {
 
+    const count =
+        wishlist.length;
+
+    $("wishlistCount").textContent =
+        count;
+
+    $("bottomWishlistCount").textContent =
+        count;
+}
+
+
+function renderWishlist() {
+
+    const container = $("wishlistItems");
+
+    if (!container) return;
+
+    container.innerHTML = "";
+
+
+    $("emptyWishlist").style.display =
+        wishlist.length ? "none" : "block";
+
+
+    wishlist.forEach(id => {
+
+        const product =
+            products.find(item => item.id === id);
+
+        if (!product) return;
+
+
+        const item =
+            document.createElement("div");
+
+        item.className = "wishlist-item";
+
+
+        item.innerHTML = `
+
+            <img
+                src="${product.image}"
+                alt="${product.name}"
+                onerror="this.src='picture/Logo.jpg'"
+            >
+
+            <div class="wishlist-item-info">
+
+                <h3>${product.name}</h3>
+
+                <strong>
+                    ${formatPrice(product.price)}
+                </strong>
+
+                <div class="wishlist-actions">
+
+                    <button
+                        class="btn btn-primary"
+                        data-wish-cart="${product.id}"
+                    >
+                        Add to Cart
+                    </button>
+
+                    <button
+                        class="btn btn-outline"
+                        data-wish-remove="${product.id}"
+                    >
+                        Remove
+                    </button>
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        container.appendChild(item);
+    });
+
+
+    container
+        .querySelectorAll("[data-wish-cart]")
+        .forEach(button => {
+
+            button.addEventListener("click", () => {
+
+                addToCart(
+                    Number(button.dataset.wishCart)
+                );
+
+            });
+
+        });
+
+
+    container
+        .querySelectorAll("[data-wish-remove]")
+        .forEach(button => {
+
+            button.addEventListener("click", () => {
+
+                toggleWishlist(
+                    Number(button.dataset.wishRemove)
+                );
+
+                renderWishlist();
+            });
+
+        });
+
+}
+
+
+function openWishlist() {
+
+    renderWishlist();
+
+    openModal("wishlistModal");
+}
+
+
+$("wishlistBtn")?.addEventListener(
+    "click",
+    openWishlist
+);
+
+$("bottomWishlist")?.addEventListener(
+    "click",
+    openWishlist
+);
+
+
+/* =========================================================
+   MODAL PRODUCT WISHLIST
+========================================================= */
+
+$("modalWishlist")?.addEventListener(
+    "click",
+    () => {
+
+        if (!currentProduct) return;
+
+        toggleWishlist(
+            currentProduct.id
+        );
+
+        renderProducts();
+
+    }
+);
+
+
+/* =========================================================
+   BUY NOW
+========================================================= */
+
+$("modalBuyNow")?.addEventListener(
+    "click",
+    () => {
+
+        if (!currentProduct) return;
+
+
+        if (!isLoggedIn()) {
+
+            localStorage.setItem(
+                STORAGE.pendingAction,
+                "buyNow"
+            );
+
+            closeModal("productModal");
+
+            openModal("loginModal");
+
+            showToast(
+                "Please login to continue."
+            );
+
+            return;
+        }
+
+
+        const selectedColor =
+            document
+                .querySelector(
+                    "#colorOptions .color-option.active"
+                )
+                ?.dataset.color || "";
+
+
+        const selectedSize =
+            document
+                .querySelector(
+                    "#sizeOptions .size-option.active"
+                )
+                ?.dataset.size || "";
+
+
+        const customization =
+            $("customizationText")
+                ?.value.trim() || "";
+
+
+        cart = [{
+
+            id: currentProduct.id,
+
+            name: currentProduct.name,
+
+            price: currentProduct.price,
+
+            image: currentProduct.image,
+
+            quantity: currentQuantity,
+
+            color: selectedColor,
+
+            size: selectedSize,
+
+            customization
+
+        }];
+
+
+        saveData(
+            STORAGE.cart,
+            cart
+        );
+
+
+        updateCartUI();
+
+        closeModal("productModal");
+
+        renderCheckoutSummary();
+
+        openModal("checkoutModal");
+
+    }
+);
+
+
+/* =========================================================
+   ACCOUNT
+========================================================= */
+
+function openAccount() {
+
+    if (isLoggedIn()) {
+
+        const user =
+            JSON.parse(
+                localStorage.getItem(
+                    STORAGE.user
+                ) || "{}"
+            );
+
+
+        $("accountWelcome").textContent =
+            user.name
+                ? `Welcome, ${user.name}!`
+                : "You are logged in.";
+
+    } else {
+
+        $("accountWelcome").textContent =
+            "Login or create your account.";
+    }
+
+
+    openModal("accountModal");
+}
+
+
+$("accountBtn")?.addEventListener(
+    "click",
+    openAccount
+);
+
+$("bottomAccount")?.addEventListener(
+    "click",
+    openAccount
+);
+
+$("mobileAccountBtn")?.addEventListener(
+    "click",
+    () => {
+
+        $("mobileMenu").classList.remove("active");
+
+        openAccount();
+    }
+);
+
+
+/* =========================================================
+   LOGIN / REGISTER OPEN
+========================================================= */
+
+$("openLogin")?.addEventListener(
+    "click",
+    () => {
+
+        closeModal("accountModal");
+
+        openModal("loginModal");
+    }
+);
+
+
+$("openRegister")?.addEventListener(
+    "click",
+    () => {
+
+        closeModal("accountModal");
+
+        openModal("registerModal");
+    }
+);
+
+
+/* =========================================================
+   AUTH METHOD
+========================================================= */
+
+function setAuthMethod(
+    method,
+    formType
+) {
+
+    if (formType === "login") {
+
+        const label =
+            $("loginContactLabel");
+
+        const input =
+            $("loginContact");
+
+        if (method === "phone") {
+
+            label.textContent = "Phone";
+
+            input.type = "tel";
+
+            input.placeholder =
+                "Enter your phone number";
+
+            $("loginPasswordGroup")
+                .style.display = "none";
+
+        } else {
+
+            label.textContent = "Email";
+
+            input.type = "email";
+
+            input.placeholder =
+                "Enter your email";
+
+            $("loginPasswordGroup")
+                .style.display = "block";
+        }
+
+    }
+
+
+    if (formType === "register") {
+
+        const label =
+            $("registerContactLabel");
+
+        const input =
+            $("registerContact");
+
+
+        if (method === "phone") {
+
+            label.textContent = "Phone";
+
+            input.type = "tel";
+
+            input.placeholder =
+                "Enter your phone number";
+
+        } else {
+
+            label.textContent = "Email";
+
+            input.type = "email";
+
+            input.placeholder =
+                "Enter your email";
+        }
+
+    }
+
+
+    document
+        .querySelectorAll(
+            `.auth-method[data-form="${formType}"]`
+        )
+        .forEach(button => {
+
+            button.classList.toggle(
+                "active",
+                button.dataset.method === method
+            );
+
+        });
+}
+
+
+document
+    .querySelectorAll(".auth-method")
+    .forEach(button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                setAuthMethod(
+                    button.dataset.method,
+                    button.dataset.form
+                );
+
+            }
+        );
+
+    });
+
+
+/* =========================================================
+   REGISTER
+========================================================= */
+
+$("registerForm")?.addEventListener(
+    "submit",
+    event => {
+
+        event.preventDefault();
+
+
+        const name =
+            $("registerName")
+                .value.trim();
+
+        const contact =
+            $("registerContact")
+                .value.trim();
+
+        const password =
+            $("registerPassword")
+                .value;
+
+
+        if (!name || !contact || !password) {
+
+            showToast(
+                "Please fill all fields."
+            );
+
+            return;
+        }
+
+
+        if (password.length < 6) {
+
+            showToast(
+                "Password must contain at least 6 characters."
+            );
+
+            return;
+        }
+
+
+        const tempUser = {
+
+            name,
+            contact,
+            password
+
+        };
+
+
+        saveData(
+            STORAGE.tempUser,
+            tempUser
+        );
+
+
+        localStorage.setItem(
+            STORAGE.pendingAuth,
+            "register"
+        );
+
+
+        $("otpDestination").textContent =
+            contact;
+
+
+        closeModal("registerModal");
+
+        openModal("otpModal");
+
+
+        showToast(
+            "Demo OTP: enter any 6 digits."
+        );
+
+    }
+);
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+$("loginForm")?.addEventListener(
+    "submit",
+    event => {
+
+        event.preventDefault();
+
+
+        const contact =
+            $("loginContact")
+                .value.trim();
+
+
+        if (!contact) {
+
+            showToast(
+                "Please enter your contact."
+            );
+
+            return;
+        }
+
+
+        localStorage.setItem(
+            STORAGE.pendingAuth,
+            "login"
+        );
+
+
+        saveData(
+            STORAGE.tempUser,
+            {
+                contact
+            }
+        );
+
+
+        $("otpDestination").textContent =
+            contact;
+
+
+        closeModal("loginModal");
+
+        openModal("otpModal");
+
+
+        showToast(
+            "Demo OTP: enter any 6 digits."
+        );
+
+    }
+);
+
+
+/* =========================================================
+   SWITCH AUTH
+========================================================= */
+
+$("switchToRegister")?.addEventListener(
+    "click",
+    () => {
+
+        closeModal("loginModal");
+
+        openModal("registerModal");
+
+    }
+);
+
+
+$("switchToLogin")?.addEventListener(
+    "click",
+    () => {
+
+        closeModal("registerModal");
+
+        openModal("loginModal");
+
+    }
+);
+
+
+/* =========================================================
+   OTP
+========================================================= */
+
+function verifyOTP(event) {
+
+    event.preventDefault();
+
+
+    const inputs =
+        document.querySelectorAll(
+            ".otp-input"
+        );
+
+
+    const otp =
+        Array.from(inputs)
+            .map(input => input.value)
+            .join("");
+
+
+    if (!/^\d{6}$/.test(otp)) {
+
+        showToast(
+            "Please enter all 6 digits."
+        );
+
+        return;
+    }
+
+
+    const pendingAuth =
+        localStorage.getItem(
+            STORAGE.pendingAuth
+        );
+
+
+    const tempUser =
+        JSON.parse(
+            localStorage.getItem(
+                STORAGE.tempUser
+            ) || "{}"
+        );
+
+
+    if (pendingAuth === "register") {
+
+        saveData(
+            STORAGE.user,
+            {
+                name: tempUser.name || "Customer",
+                email:
+                    tempUser.contact?.includes("@")
+                        ? tempUser.contact
+                        : "",
+                phone:
+                    tempUser.contact?.includes("@")
+                        ? ""
+                        : tempUser.contact
+            }
+        );
+
+    } else {
+
+        const oldUser =
+            JSON.parse(
+                localStorage.getItem(
+                    STORAGE.user
+                ) || "{}"
+            );
+
+
+        if (!oldUser.name) {
+            oldUser.name = "Customer";
+        }
+
+
+        if (tempUser.contact?.includes("@")) {
+            oldUser.email = tempUser.contact;
+        } else {
+            oldUser.phone = tempUser.contact;
+        }
+
+
+        saveData(
+            STORAGE.user,
+            oldUser
+        );
+    }
+
+
+    localStorage.setItem(
+        STORAGE.loggedIn,
+        "true"
+    );
+
+
+    localStorage.removeItem(
+        STORAGE.pendingAuth
+    );
+
+
+    localStorage.removeItem(
+        STORAGE.tempUser
+    );
+
+
+    inputs.forEach(input => {
+        input.value = "";
+    });
+
+
+    closeModal("otpModal");
+
+
+    const pendingAction =
+        localStorage.getItem(
+            STORAGE.pendingAction
+        );
+
+
+    localStorage.removeItem(
+        STORAGE.pendingAction
+    );
+
+
+    showToast(
+        "Login successful! 🎉"
+    );
+
+
+    if (
+        pendingAction === "checkout" ||
+        pendingAction === "buyNow"
+    ) {
+
+        setTimeout(() => {
+
+            renderCheckoutSummary();
+
+            openModal("checkoutModal");
+
+        }, 400);
+    }
+
+}
+
+
+$("otpForm")?.addEventListener(
+    "submit",
+    verifyOTP
+);
+
+
+/* =========================================================
+   OTP INPUT
+========================================================= */
+
+document
+    .querySelectorAll(".otp-input")
+    .forEach((input, index, inputs) => {
+
+        input.addEventListener(
+            "input",
+            () => {
+
+                input.value =
+                    input.value.replace(
+                        /\D/g,
+                        ""
+                    ).slice(0,1);
+
+
+                if (
+                    input.value &&
+                    index < inputs.length - 1
+                ) {
+
+                    inputs[index + 1].focus();
+                }
+
+            }
+        );
+
+
+        input.addEventListener(
+            "keydown",
+            event => {
+
+                if (
+                    event.key === "Backspace" &&
+                    !input.value &&
+                    index > 0
+                ) {
+
+                    inputs[index - 1].focus();
+                }
+
+            }
+        );
+
+    });
+
+
+$("resendOtp")?.addEventListener(
+    "click",
+    () => {
+
+        showToast(
+            "Demo OTP: enter any 6 digits."
+        );
+
+    }
+);
+
+
+/* =========================================================
+   CUSTOM ORDER
+========================================================= */
+
+$("customOrderBtn")?.addEventListener(
+    "click",
+    () => {
+
+        openModal("customOrderModal");
+
+    }
+);
+
+
+$("customOrderForm")?.addEventListener(
+    "submit",
+    event => {
+
+        event.preventDefault();
+
+
+        const name =
+            $("customName")
+                .value.trim();
+
+        const phone =
+            $("customPhone")
+                .value.trim();
+
+        const request =
+            $("customRequest")
+                .value.trim();
+
+
+        if (!name || !phone || !request) {
+
+            showToast(
+                "Please fill all fields."
+            );
+
+            return;
+        }
+
+
+        let message =
+            `🧶 *SARU_CRAFTS_WORLD - CUSTOM ORDER* ❤️\n\n`;
+
+        message +=
+            `👤 Customer: ${name}\n`;
+
+        message +=
+            `📱 Phone: ${phone}\n\n`;
+
+        message +=
+            `📝 Request:\n${request}`;
+
+
+        const url =
+            "https://wa.me/" +
+            WHATSAPP_NUMBER +
+            "?text=" +
+            encodeURIComponent(message);
+
+
+        const whatsappWindow =
+            window.open(url, "_blank");
+
+
+        if (!whatsappWindow) {
+            window.location.href = url;
+        }
+
+
+        $("customOrderForm").reset();
+
+        closeModal("customOrderModal");
+
+    }
+);
+
+
+/* =========================================================
+   ZOOM
+========================================================= */
+
+$("zoomImage")?.addEventListener(
+    "click",
+    () => {
+
+        if (!currentProduct) return;
+
+        $("zoomedImage").src =
+            currentImages[currentImageIndex];
+
+        $("zoomedImage").alt =
+            currentProduct.name;
+
+        openModal("zoomModal");
+
+    }
+);
+
+
+/* =========================================================
+   ACCORDION
+========================================================= */
+
+document.addEventListener(
+    "click",
+    event => {
+
+        const title =
+            event.target.closest(
+                ".accordion-title"
+            );
+
+        if (!title) return;
+
+        const item =
+            title.closest(
+                ".accordion-item"
+            );
+
+        item.classList.toggle("open");
+
+    }
+);
+
+
+/* =========================================================
+   MOBILE MENU
+========================================================= */
+
+$("mobileMenuBtn")?.addEventListener(
+    "click",
+    () => {
+
+        $("mobileMenu")
+            .classList.add("active");
+
+    }
+);
+
+
+$("mobileMenuClose")?.addEventListener(
+    "click",
+    () => {
+
+        $("mobileMenu")
+            .classList.remove("active");
+
+    }
+);
+
+
+document
+    .querySelectorAll("#mobileMenu a")
+    .forEach(link => {
+
+        link.addEventListener(
+            "click",
+            () => {
+
+                $("mobileMenu")
+                    .classList.remove("active");
+
+            }
+        );
+
+    });
+
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+function applyDarkMode() {
+
+    const enabled =
+        localStorage.getItem(
+            STORAGE.darkMode
+        ) === "true";
+
+
+    document.body.classList.toggle(
+        "dark",
+        enabled
+    );
+
+
+    const icon =
+        $("darkModeBtn")?.querySelector("i");
+
+
+    if (icon) {
+
+        icon.className =
+            enabled
+                ? "fa-solid fa-sun"
+                : "fa-solid fa-moon";
+    }
+
+
+    const mobileIcon =
+        $("mobileDarkModeBtn")
+            ?.querySelector("i");
+
+
+    if (mobileIcon) {
+
+        mobileIcon.className =
+            enabled
+                ? "fa-solid fa-sun"
+                : "fa-solid fa-moon";
+    }
+
+}
+
+
+function toggleDarkMode() {
+
+    const enabled =
         document.body.classList.toggle(
             "dark"
         );
 
 
-        const enabled =
-            document.body.classList.contains(
-                "dark"
+    localStorage.setItem(
+        STORAGE.darkMode,
+        enabled
+    );
+
+
+    applyDarkMode();
+
+}
+
+
+$("darkModeBtn")?.addEventListener(
+    "click",
+    toggleDarkMode
+);
+
+$("mobileDarkModeBtn")?.addEventListener(
+    "click",
+    toggleDarkMode
+);
+
+
+/* =========================================================
+   CONTACT LINKS
+========================================================= */
+
+function openWhatsApp() {
+
+    const url =
+        "https://wa.me/" +
+        WHATSAPP_NUMBER;
+
+
+    window.open(
+        url,
+        "_blank"
+    );
+
+}
+
+
+[
+    "whatsappLink",
+    "footerWhatsapp",
+    "floatingWhatsapp"
+]
+.forEach(id => {
+
+    $(id)?.addEventListener(
+        "click",
+        event => {
+
+            event.preventDefault();
+
+            openWhatsApp();
+
+        }
+    );
+
+});
+
+
+const instagramURL =
+    `https://www.instagram.com/${INSTAGRAM_USERNAME}/`;
+
+
+$("instagramLink").href =
+    instagramURL;
+
+$("footerInstagram").href =
+    instagramURL;
+
+
+$("emailLink").href =
+    `mailto:${EMAIL_ADDRESS}`;
+
+
+/* =========================================================
+   FOOTER LOGIN / REGISTER
+========================================================= */
+
+$("footerLogin")?.addEventListener(
+    "click",
+    event => {
+
+        event.preventDefault();
+
+        openModal("loginModal");
+
+    }
+);
+
+
+$("footerRegister")?.addEventListener(
+    "click",
+    event => {
+
+        event.preventDefault();
+
+        openModal("registerModal");
+
+    }
+);
+
+
+$("footerWishlist")?.addEventListener(
+    "click",
+    event => {
+
+        event.preventDefault();
+
+        openWishlist();
+
+    }
+);
+
+
+$("footerOrders")?.addEventListener(
+    "click",
+    event => {
+
+        event.preventDefault();
+
+
+        const orders =
+            JSON.parse(
+                localStorage.getItem(
+                    STORAGE.orders
+                ) || "[]"
             );
 
 
-        localStorage.setItem(
-            "saruDarkMode",
-            enabled
+        if (!orders.length) {
+
+            showToast(
+                "You don't have any saved orders yet."
+            );
+
+            return;
+        }
+
+
+        showToast(
+            `You have ${orders.length} saved order(s) on this device.`
         );
 
-
-        this.textContent =
-            enabled
-                ? "☀️"
-                : "🌙";
     }
 );
 
 
-// ==========================================
-// MOBILE MENU
-// ==========================================
+/* =========================================================
+   BOTTOM NAV
+========================================================= */
 
-const menuBtn =
-    document.getElementById(
-        "menuBtn"
-    );
-
-
-const navbar =
-    document.getElementById(
-        "navbar"
-    );
-
-
-menuBtn?.addEventListener(
+$("bottomCart")?.addEventListener(
     "click",
-    function () {
+    openCart
+);
 
-        navbar?.classList.toggle(
-            "active"
-        );
+
+/* =========================================================
+   CLOSE MODALS
+========================================================= */
+
+document.addEventListener(
+    "click",
+    event => {
+
+        const closeButton =
+            event.target.closest(
+                "[data-close]"
+            );
+
+
+        if (!closeButton) return;
+
+
+        const id =
+            closeButton.dataset.close;
+
+
+        if (id === "cartSidebar") {
+
+            closeCart();
+
+        } else {
+
+            closeModal(id);
+
+        }
+
     }
 );
 
 
-navbar
-    ?.querySelectorAll("a")
-    .forEach(link => {
+/* =========================================================
+   ESC KEY
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (event.key !== "Escape") return;
+
+        closeAllModals();
+
+        closeCart();
+
+        $("mobileMenu")
+            ?.classList.remove("active");
+
+    }
+);
+
+
+/* =========================================================
+   BACK TO TOP
+========================================================= */
+
+function createBackToTop() {
+
+    if ($(".back-to-top")) return;
+
+    const button =
+        document.createElement("button");
+
+    button.className =
+        "back-to-top";
+
+    button.innerHTML =
+        `<i class="fa-solid fa-arrow-up"></i>`;
+
+    button.addEventListener(
+        "click",
+        () => {
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+
+        }
+    );
+
+
+    document.body.appendChild(button);
+
+
+    window.addEventListener(
+        "scroll",
+        () => {
+
+            button.classList.toggle(
+                "show",
+                window.scrollY > 500
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   ACTIVE MOBILE NAV
+========================================================= */
+
+function setupMobileActiveNav() {
+
+    const links =
+        document.querySelectorAll(
+            ".mobile-bottom-nav a"
+        );
+
+
+    links.forEach(link => {
 
         link.addEventListener(
             "click",
-            function () {
+            () => {
 
-                navbar.classList.remove(
-                    "active"
+                links.forEach(item =>
+                    item.classList.remove("active")
                 );
+
+                link.classList.add("active");
+
             }
         );
 
     });
 
-
-// ==========================================
-// CURRENT YEAR
-// ==========================================
-
-const currentYear =
-    document.getElementById(
-        "currentYear"
-    );
-
-
-if (currentYear) {
-
-    currentYear.textContent =
-        new Date().getFullYear();
 }
 
 
-// ==========================================
-// INITIAL LOAD
-// ==========================================
+/* =========================================================
+   INITIALIZE
+========================================================= */
 
-saveCart();
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
 
-saveWishlist();
+        renderProducts();
 
-saveOrders();
+        updateCartUI();
 
-displayProducts();
+        updateWishlistCount();
 
-displayCart();
+        applyDarkMode();
 
-displayWishlist();
+        createBackToTop();
+
+        setupMobileActiveNav();
+
+    }
+);
+
+
+/* =========================================================
+   GLOBAL FUNCTIONS
+========================================================= */
+
+window.addToCart =
+    addToCart;
+
+window.openProduct =
+    openProduct;
+
+window.toggleWishlist =
+    toggleWishlist;
+
+window.openCart =
+    openCart;
+
+window.closeCart =
+    closeCart;
+
+window.openWishlist =
+    openWishlist;
+
+window.openCheckout =
+    openCheckout;
+
+window.openAccount =
+    openAccount;
+
+window.openModal =
+    openModal;
+
+window.closeModal =
+    closeModal;
