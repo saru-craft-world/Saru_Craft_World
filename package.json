@@ -1,0 +1,10 @@
+{
+  "name": "saru-crafts-world",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Saru Crafts World OTP verification functions",
+  "dependencies": {
+    "firebase-admin": "^13.5.0",
+    "resend": "^6.0.0"
+  }
+}
